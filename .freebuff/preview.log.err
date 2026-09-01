@@ -1,0 +1,1567 @@
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
+
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor/sidebar.tsx:130:10
+Error: the name `FileIcon` is defined multiple times
+  128 | }
+  129 |
+> 130 | function FileIcon({ type }: { type: FileNode['type'] }) {
+      |          ^^^^^^^^
+  131 |   switch (type) {
+  132 |     case 'json':
+  133 |       return <FileJson className="size-4 shrink-0 text-amber-400" />
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/sidebar.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Client Component Browser]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/sidebar.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Client Component SSR]
+    ./components/editor-shell.tsx [Server Component]
+    ./app/editor/page.tsx [Server Component] 
+[browser] ./components/editor-shell.tsx:361:33
+Error: Expected '</', got 'ident'
+  359 |                   ) : (
+  360 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 361 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  362 |                   )}
+  363 |                 </Panel>
+  364 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:361:33
+Error: Expected '</', got 'ident'
+  359 |                   ) : (
+  360 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 361 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  362 |                   )}
+  363 |                 </Panel>
+  364 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:361:33
+Error: Expected '</', got 'ident'
+  359 |                   ) : (
+  360 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 361 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  362 |                   )}
+  363 |                 </Panel>
+  364 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:361:33
+Error: Expected '</', got 'ident'
+  359 |                   ) : (
+  360 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 361 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  362 |                   )}
+  363 |                 </Panel>
+  364 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:361:33
+Error: Expected '</', got 'ident'
+  359 |                   ) : (
+  360 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 361 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  362 |                   )}
+  363 |                 </Panel>
+  364 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:361:33
+Error: Expected '</', got 'ident'
+  359 |                   ) : (
+  360 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 361 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  362 |                   )}
+  363 |                 </Panel>
+  364 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:361:33
+Error: Expected '</', got 'ident'
+  359 |                   ) : (
+  360 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 361 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  362 |                   )}
+  363 |                 </Panel>
+  364 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:361:33
+Error: Expected '</', got 'ident'
+  359 |                   ) : (
+  360 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 361 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  362 |                   )}
+  363 |                 </Panel>
+  364 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:361:33
+Error: Expected '</', got 'ident'
+  359 |                   ) : (
+  360 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 361 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  362 |                   )}
+  363 |                 </Panel>
+  364 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:361:33
+Error: Expected '</', got 'ident'
+  359 |                   ) : (
+  360 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 361 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  362 |                   )}
+  363 |                 </Panel>
+  364 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:361:33
+Error: Expected '</', got 'ident'
+  359 |                   ) : (
+  360 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 361 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  362 |                   )}
+  363 |                 </Panel>
+  364 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:363:33
+Error: Expected '</', got 'ident'
+  361 |                   ) : (
+  362 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 363 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  364 |                   )}
+  365 |                 </Panel>
+  366 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:363:33
+Error: Expected '</', got 'ident'
+  361 |                   ) : (
+  362 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 363 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  364 |                   )}
+  365 |                 </Panel>
+  366 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:363:33
+Error: Expected '</', got 'ident'
+  361 |                   ) : (
+  362 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 363 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  364 |                   )}
+  365 |                 </Panel>
+  366 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:363:33
+Error: Expected '</', got 'ident'
+  361 |                   ) : (
+  362 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 363 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  364 |                   )}
+  365 |                 </Panel>
+  366 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:363:33
+Error: Expected '</', got 'ident'
+  361 |                   ) : (
+  362 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 363 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  364 |                   )}
+  365 |                 </Panel>
+  366 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:363:33
+Error: Expected '</', got 'ident'
+  361 |                   ) : (
+  362 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 363 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  364 |                   )}
+  365 |                 </Panel>
+  366 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:363:33
+Error: Expected '</', got 'ident'
+  361 |                   ) : (
+  362 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 363 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  364 |                   )}
+  365 |                 </Panel>
+  366 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:363:33
+Error: Expected '</', got 'ident'
+  361 |                   ) : (
+  362 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 363 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  364 |                   )}
+  365 |                 </Panel>
+  366 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:363:33
+Error: Expected '</', got 'ident'
+  361 |                   ) : (
+  362 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 363 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  364 |                   )}
+  365 |                 </Panel>
+  366 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./components/editor-shell.tsx:363:33
+Error: Expected '</', got 'ident'
+  361 |                   ) : (
+  362 |                     <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFin...
+> 363 |                     <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPo...
+      |                                 ^^^^^^^^^^^^^
+  364 |                   )}
+  365 |                 </Panel>
+  366 |                 {splitMode && (
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/editor-shell.tsx
+    ./app/editor/page.tsx 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+[browser] ./app/layout.tsx:63:14
+Error: Unexpected token `string literal`. Expected yield, an identifier, [ or {
+  61 | },
+  62 |       {
+> 63 |         url: '/icon-dark-32x32.png',
+     |              ^^^^^^^^^^^^^^^^^^^^^^
+  64 |         media: '(prefers-color-scheme: dark)',
+  65 |       },
+  66 |       {
+
+Parsing ecmascript source code failed 
+⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:49192". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase

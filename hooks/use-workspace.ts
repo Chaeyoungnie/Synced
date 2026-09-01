@@ -74,6 +74,9 @@ export function useWorkspace(workspaceId?: string | null) {
   const filesRef = useRef<WorkspaceFile[]>([])
   const lastSavedRef = useRef<Record<string, string>>({})
   filesRef.current = dbFiles
+  const [error, setError] = useState<string | null>(null)
+  const retryCount = useRef<Record<string, number>>({})
+  const MAX_RETRIES = 3
 
   const loadWorkspace = useCallback(async (id: string) => {
     if (!isSupabaseConfigured()) return false
@@ -107,16 +110,29 @@ export function useWorkspace(workspaceId?: string | null) {
   const saveFile = useCallback((fileName: string, content: string) => {
     setFileContents(prev => ({ ...prev, [fileName]: content }))
     lastSavedRef.current[fileName] = content
+    setError(null)
     if (isDemo) return
     if (saveTimers.current[fileName]) clearTimeout(saveTimers.current[fileName])
     saveTimers.current[fileName] = setTimeout(async () => {
       const file = filesRef.current.find(f => f.name === fileName)
       if (!file) return
-      try {
-        const supabase = createClient()
-        await supabase.from("files").update({ content, git_status: "modified" }).eq("id", file.id)
-        setDbFiles(prev => prev.map(f => f.id === file.id ? { ...f, content, git_status: "modified" as GitStatus } : f))
-      } catch {}
+      const attemptSave = async (attempt: number) => {
+        try {
+          const supabase = createClient()
+          const { error: saveError } = await supabase.from("files").update({ content, git_status: "modified" }).eq("id", file.id)
+          if (saveError) throw saveError
+          setDbFiles(prev => prev.map(f => f.id === file.id ? { ...f, content, git_status: "modified" as GitStatus } : f))
+          retryCount.current[fileName] = 0
+        } catch (e) {
+          if (attempt < MAX_RETRIES) {
+            setTimeout(() => attemptSave(attempt + 1), 1000 * Math.pow(2, attempt))
+          } else {
+            setError('Failed to save ' + fileName + '. Changes may be lost.')
+            retryCount.current[fileName] = 0
+          }
+        }
+      }
+      await attemptSave(0)
     }, 1000)
   }, [isDemo])
 
@@ -209,5 +225,5 @@ useEffect(() => {
 
   useEffect(() => () => { Object.values(saveTimers.current).forEach(clearTimeout) }, [])
 
-  return { fileTree, fileContents, collaborators, workspace, files: dbFiles, loading, isDemo, saveFile, createFile, deleteFile, renameFile }
+  return { fileTree, fileContents, collaborators, workspace, files: dbFiles, loading, isDemo, error, saveFile, createFile, deleteFile, renameFile }
 }

@@ -219,3 +219,30 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .cm-scroller::-webkit-scrollbar-thumb:hover {
   background: var(--muted-foreground);
 }
+
+/* Custom titlebar drag region */
+[data-tauri-drag-region] {
+  -webkit-app-region: drag;
+}
+
+[data-tauri-drag-region] button,
+[data-tauri-drag-region] a,
+[data-tauri-drag-region] input {
+  -webkit-app-region: no-drag;
+}
+
+/* Folder expand/collapse animation */
+.folder-children {
+  overflow: hidden;
+  transition: max-height 0.2s ease-out, opacity 0.2s ease-out;
+}
+
+.folder-children[data-open='true'] {
+  max-height: 1000px;
+  opacity: 1;
+}
+
+.folder-children[data-open='false'] {
+  max-height: 0;
+  opacity: 0;
+}

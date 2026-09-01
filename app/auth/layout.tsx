@@ -15,7 +15,7 @@ export default function AuthLayout({
             <div className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
               <Sparkles className="size-5" />
             </div>
-            <span className="text-2xl font-bold">Codebase</span>
+            <span className="text-2xl font-bold">Synced</span>
           </Link>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
             Build together.<br />Ship further.

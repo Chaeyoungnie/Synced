@@ -354,6 +354,33 @@ export default function LandingPage() {
         </div>
       </section>
 
+      
+      {/* App Screenshot */}
+      <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
+        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-2xl">
+          <div className="flex h-10 items-center gap-2 border-b border-border px-4">
+            <div className="size-3 rounded-full bg-red-500/80" />
+            <div className="size-3 rounded-full bg-yellow-500/80" />
+            <div className="size-3 rounded-full bg-green-500/80" />
+            <span className="ml-4 text-xs text-muted-foreground">Synced Editor</span>
+          </div>
+          <div className="relative aspect-video bg-gradient-to-br from-background via-background to-primary/5">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center">
+                <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-primary/10">
+                  <svg className="size-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                    <path d="M2 17l10 5 10-5" />
+                    <path d="M2 12l10 5 10-5" />
+                  </svg>
+                </div>
+                <p className="text-lg font-semibold">Live Editor Preview</p>
+                <p className="mt-1 text-sm text-muted-foreground">Real-time collaboration with live cursors and instant preview</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       {/* CTA */}
       <section className="mx-auto max-w-7xl border-t border-border px-5 py-24 text-center sm:px-8">
         <p className="font-mono text-xs text-primary">READY WHEN YOU ARE</p>

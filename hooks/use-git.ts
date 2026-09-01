@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
+import { features } from "@/lib/features"
 
 export interface GitBranch {
   name: string

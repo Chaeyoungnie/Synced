@@ -125,7 +125,7 @@ import './globals.css'
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
 
 export const metadata: Metadata = {
-  title: 'Codebase — Build together. Ship further.',
+  title: 'Synced — Build together. Ship further.',
 }
 
 export default function RootLayout({

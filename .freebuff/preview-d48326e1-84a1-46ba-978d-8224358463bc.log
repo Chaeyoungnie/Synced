@@ -228,3 +228,43 @@
  GET / 200 in 226ms (next.js: 22ms, proxy.ts: 43ms, application-code: 161ms)
  GET / 200 in 105ms (next.js: 13ms, proxy.ts: 47ms, application-code: 45ms)
  GET / 200 in 141ms (next.js: 25ms, proxy.ts: 45ms, application-code: 72ms)
+ GET /editor 200 in 2.1s (next.js: 438ms, proxy.ts: 204ms, application-code: 1416ms)
+✓ Compiled in 629ms
+ GET /editor 200 in 361ms (next.js: 100ms, proxy.ts: 106ms, application-code: 156ms)
+ GET /download 200 in 3.4s (next.js: 3.2s, proxy.ts: 36ms, application-code: 157ms)
+ GET / 200 in 2.5s (next.js: 1001ms, proxy.ts: 291ms, application-code: 1254ms)
+ GET / 200 in 3.9s (next.js: 245ms, proxy.ts: 319ms, application-code: 3.3s)
+ GET / 200 in 3.5s (next.js: 2.1s, proxy.ts: 852ms, application-code: 498ms)
+ GET / 200 in 1838ms (next.js: 304ms, proxy.ts: 1118ms, application-code: 416ms)
+ GET / 200 in 225ms (next.js: 97ms, proxy.ts: 32ms, application-code: 96ms)
+ GET /editor 200 in 931ms (next.js: 414ms, proxy.ts: 22ms, application-code: 495ms)
+ GET /download 200 in 110ms (next.js: 56ms, proxy.ts: 12ms, application-code: 42ms)
+ GET / 200 in 66ms (next.js: 11ms, proxy.ts: 15ms, application-code: 40ms)
+ GET /editor 200 in 221ms (next.js: 20ms, proxy.ts: 12ms, application-code: 189ms)
+ GET /download 200 in 1532ms (next.js: 278ms, proxy.ts: 758ms, application-code: 496ms)
+ GET / 200 in 858ms (next.js: 269ms, proxy.ts: 95ms, application-code: 495ms)
+ GET /editor 200 in 3.8s (next.js: 159ms, proxy.ts: 56ms, application-code: 3.6s)
+ GET /editor 200 in 232ms (next.js: 25ms, proxy.ts: 24ms, application-code: 182ms)
+ GET /download 200 in 135ms (next.js: 33ms, proxy.ts: 41ms, application-code: 61ms)
+ GET / 200 in 246ms (next.js: 26ms, proxy.ts: 20ms, application-code: 200ms)
+ GET / 200 in 138ms (next.js: 15ms, proxy.ts: 24ms, application-code: 99ms)
+ GET /editor 200 in 249ms (next.js: 23ms, proxy.ts: 11ms, application-code: 215ms)
+ GET /download 200 in 79ms (next.js: 21ms, proxy.ts: 12ms, application-code: 46ms)
+ GET /download 200 in 601ms (next.js: 157ms, proxy.ts: 123ms, application-code: 321ms)
+ GET /download 200 in 502ms (next.js: 221ms, proxy.ts: 36ms, application-code: 245ms)
+ GET /download 200 in 373ms (next.js: 151ms, proxy.ts: 40ms, application-code: 182ms)
+ GET /download 200 in 2.2s (next.js: 1471ms, proxy.ts: 273ms, application-code: 442ms)
+ GET /download 200 in 1914ms (next.js: 1795ms, proxy.ts: 37ms, application-code: 82ms)
+✓ Compiled in 891ms
+ GET /download 200 in 617ms (next.js: 152ms, proxy.ts: 196ms, application-code: 269ms)
+ GET /download 200 in 520ms (next.js: 260ms, proxy.ts: 130ms, application-code: 130ms)
+✓ Compiled in 124ms
+ GET /download 200 in 1253ms (next.js: 560ms, proxy.ts: 43ms, application-code: 650ms)
+ GET /download 200 in 1242ms (next.js: 1079ms, proxy.ts: 55ms, application-code: 109ms)
+✓ Compiled in 349ms
+ GET /download 200 in 265ms (next.js: 174ms, proxy.ts: 17ms, application-code: 74ms)
+ GET /download 200 in 344ms (next.js: 107ms, proxy.ts: 74ms, application-code: 163ms)
+ GET /editor 200 in 800ms (next.js: 260ms, proxy.ts: 101ms, application-code: 439ms)
+✓ Compiled in 13.5s
+✓ Compiled in 5.2s
+[?25h

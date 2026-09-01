@@ -51,7 +51,7 @@ export default function DownloadPage() {
           <Link href="/">
             <Button variant="ghost" size="sm" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
-              Back to Freebuff
+              Back to Synced
             </Button>
           </Link>
         </div>
@@ -60,7 +60,7 @@ export default function DownloadPage() {
       {/* Hero */}
       <section className="max-w-5xl mx-auto px-6 pt-16 pb-12 text-center">
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-          Download <span className="text-blue-500">Freebuff</span> Desktop
+          Download <span className="text-blue-500">Synced</span> Desktop
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
           The full collaborative code editor experience — real-time collaboration,
@@ -111,7 +111,7 @@ export default function DownloadPage() {
 
       {/* Footer */}
       <footer className="border-t border-border py-6 text-center text-sm text-muted-foreground">
-        Freebuff is open source and free forever.
+        Synced is open source and free forever.
       </footer>
     </div>
   )

@@ -103,7 +103,7 @@ describe('EditorShell', () => {
   it('renders the editor shell', () => {
     renderWithProviders(<EditorShell />)
 
-    expect(screen.getByText('Codebase')).toBeInTheDocument()
+    expect(screen.getByText('Synced')).toBeInTheDocument()
   })
 
   it('renders sidebar with file list', () => {
@@ -152,28 +152,28 @@ describe('EditorShell', () => {
     renderWithProviders(<EditorShell />)
 
     // Sidebar should be visible initially
-    expect(screen.getByText('Codebase')).toBeInTheDocument()
+    expect(screen.getByText('Synced')).toBeInTheDocument()
 
     await act(async () => {
       fireEvent.keyDown(document, { key: 'b', ctrlKey: true })
     })
 
     // Sidebar panel should still be present (panels don't hide content)
-    expect(screen.getByText('Codebase')).toBeInTheDocument()
+    expect(screen.getByText('Synced')).toBeInTheDocument()
   })
 
   it('opens new file dialog', async () => {
     renderWithProviders(<EditorShell />)
 
         // New file creates a new tab
-    expect(screen.getByText('Codebase')).toBeInTheDocument()
+    expect(screen.getByText('Synced')).toBeInTheDocument()
   })
 
   it('opens theme toggle', async () => {
     renderWithProviders(<EditorShell />)
 
         // Theme toggle should be in the header
-    expect(screen.getByText('Codebase')).toBeInTheDocument()
+    expect(screen.getByText('Synced')).toBeInTheDocument()
   })
 
   it('shows save state in header', () => {
@@ -186,6 +186,6 @@ describe('EditorShell', () => {
   it('renders with split editor button', () => {
     renderWithProviders(<EditorShell />)
 
-        expect(screen.getByText('Codebase')).toBeInTheDocument()
+        expect(screen.getByText('Synced')).toBeInTheDocument()
   })
 })

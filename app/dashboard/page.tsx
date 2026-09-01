@@ -43,14 +43,26 @@ export default function DashboardPage() {
   const loadWorkspaces = useCallback(async () => {
     if (!user || !isSupabaseConfigured()) { setLoading(false); return }
     try {
-      const { data, error } = await getWorkspaces()
-      if (error || !data) { setLoading(false); return }
-      const mapped: Workspace[] = data.map((w: any) => ({
-        id: w.id, name: w.name, description: w.description || '',
-        fileCount: 0, collaboratorCount: 1,
-        lastModified: new Date(w.updated_at).toLocaleDateString(),
-        isPublic: w.is_public || false, language: 'TypeScript', color: '#6366f1',
+      // Fetch workspaces with file counts
+      const { data: workspaces, error: wsError } = await getWorkspaces()
+      if (wsError || !workspaces) { setLoading(false); return }
+      // Get file counts for each workspace
+      const mapped: Workspace[] = await Promise.all(workspaces.map(async (w: any) => {
+        const { count } = await (await import('@/lib/supabase/client')).createClient()
+          .from('files')
+          .select('*', { count: 'exact', head: true })
+          .eq('workspace_id', w.id)
+        return {
+          id: w.id, name: w.name, description: w.description || '',
+          fileCount: count || 0,
+          collaboratorCount: w.collaborators?.length || 1,
+          lastModified: w.updated_at ? new Date(w.updated_at).toLocaleDateString() : 'Never',
+          isPublic: w.is_public || false,
+          language: 'TypeScript',
+          color: '#6366f1',
+        }
       }))
+
       setAuthWs(mapped)
     } catch {}
     setLoading(false)
@@ -68,6 +80,7 @@ export default function DashboardPage() {
       try {
         const { data, error } = await createWorkspace(newName, newDesc || undefined)
         if (data && !error) {
+          router.push("/editor?ws=" + data.id)
           setAuthWs(prev => [{ id: data.id, name: data.name, description: data.description || '', fileCount: 0, collaboratorCount: 1, lastModified: 'Just now', isPublic: false, language: 'TypeScript', color: '#6366f1' }, ...prev])
         }
       } catch {}
@@ -85,7 +98,7 @@ export default function DashboardPage() {
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link href="/" className="flex items-center gap-2 text-foreground hover:opacity-80">
             <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground"><Sparkles className="size-4" /></div>
-            <span className="text-sm font-semibold">Codebase</span>
+            <span className="text-sm font-semibold">Synced</span>
           </Link>
           <div className="flex items-center gap-2">
             {user ? (

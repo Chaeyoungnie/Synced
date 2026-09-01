@@ -1,0 +1,35 @@
+[0] ▲ Next.js 16.3.0 (Turbopack)
+[0] - Local:         http://localhost:53572
+[0] - Network:       http://192.168.1.182:53572
+[0] - Environments: .env.local
+[0] ✓ Ready in 1347ms
+[0] ✓ Running next.config.mjs took 41ms
+[0] ⨯ Another next dev server is already running.
+[0] 
+[0] - Local:        http://localhost:56708
+[0] - PID:          8840
+[0] - Dir:          C:\Users\ernes\Downloads\collaborative-code-editor
+[0] - Log:          .next\dev\logs\next-development.log
+[0] 
+[0] You can access the existing server at http://localhost:56708,
+[0] or run taskkill /PID 8840 /F to stop it and start a new one.
+[0] [?25h
+[0] next dev exited with code 1[[1] [1] [12048:0901/200913.840:ERROR:cache_util_win.cc(20)] Unable to move the cache: Access is denied. (0x5)
+[1] [12048:0901/200913.867:ERROR:cache_util_win.cc(20)] Unable to move the cache: Access is denied. (0x5)
+[1] [12048:0901/200913.893:ERROR:cache_util_win.cc(20)] Unable to move the cache: Access is denied. (0x5)
+[1] [12048:0901/200913.902:ERROR:disk_cache.cc(208)] Unable to create cache
+[1] [12048:0901/200913.902:ERROR:gpu_disk_cache.cc(713)] Gpu Cache Creation failed: -2
+[1] [12048:0901/200913.902:ERROR:disk_cache.cc(208)] Unable to create cache
+[1] [12048:0901/200913.902:ERROR:gpu_disk_cache.cc(713)] Gpu Cache Creation failed: -2
+[1] [12048:0901/200913.907:ERROR:disk_cache.cc(208)] Unable to create cache
+[1] [12048:0901/200913.907:ERROR:gpu_disk_cache.cc(713)] Gpu Cache Creation fail[1] [9664:0901/200918.630:ERROR:quota_database.cc(1062)] Could not open the quota database, resetting.
+[1] [9664:0901/200920.537:ERROR:CONSOLE(1)] "Request Autofill.enable failed. {"code":-32601,"message":"'Autofill.enable' wasn't found"}", source: devtools://devtools/bundled/core/protocol_client/protocol_client.js (1)
+[1] [9664:0901/200920.537:ERROR:CONSOLE(1)] "Request Autofill.setAddresses failed. {"code":-32601,"message":"'Autofill.setAddresses' wasn't found"}", source: devtools://devtools/bundled/core/protocol_client/protocol_client.js (1)
+[1] [9664:0901/200921.621:ERROR:quota_database.cc(1062)] Could not open the quota database, resetting.
+[1] [9664:0901/200924.559:ERROR:quota_database.cc(1067)] Failed to reset the quota database.
+[1] [9664:0901/200924.559:ERROR:quota_database.cc(1067)] Failed to reset the quota database.
+[1] wait-on ht[1] wait-on http://localhost:3000 && electron . exited with code 4294967295
+[ELIFECYCLE] Command failed with exit code 1.
+7)] Failed to reset the quota database.
+[1] wait-on http://localhost:3000 && electron . exited with code 0
+[ELIFECYCLE] Command failed with exit code 1.

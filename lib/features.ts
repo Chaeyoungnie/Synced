@@ -17,9 +17,11 @@ export interface FeatureFlags {
 
 export function getPlatform(): AppPlatform {
   if (typeof window === 'undefined') return 'web'
-  // Electron sets navigator.userAgent to include 'Electron'
-  const isElectron = /Electron/.test(navigator.userAgent)
-  return isElectron ? 'desktop' : 'web'
+  // Check for a global flag set by the Electron preload script.
+  // We do NOT use navigator.userAgent because the dev environment itself
+  // runs inside Electron (Freebuff), so every page would appear as 'desktop'.
+  const isDesktopApp = !!(window as any).__DESKTOP_APP__
+  return isDesktopApp ? 'desktop' : 'web'
 }
 
 export function getFeatureFlags(): FeatureFlags {

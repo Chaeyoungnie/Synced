@@ -1,18 +1,14 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { getFeatureFlags, features, hasFeature, resetFeatureFlags, type FeatureFlags } from './features'
+import { getFeatureFlags, features, hasFeature, resetFeatureFlags } from './features'
 
 describe('features', () => {
   beforeEach(() => {
     resetFeatureFlags()
-    // Reset navigator.userAgent
-    Object.defineProperty(navigator, 'userAgent', {
-      value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      writable: true,
-      configurable: true,
-    })
+    // Reset the desktop app flag
+    delete (window as any).__DESKTOP_APP__
   })
 
-  it('returns web flags by default (no Electron in user agent)', () => {
+  it('returns web flags by default (no __DESKTOP_APP__ flag)', () => {
     const flags = getFeatureFlags()
     expect(flags.platform).toBe('web')
     expect(flags.collaboration).toBe(false)
@@ -26,12 +22,8 @@ describe('features', () => {
     expect(flags.maxFiles).toBe(5)
   })
 
-  it('returns desktop flags when Electron detected', () => {
-    Object.defineProperty(navigator, 'userAgent', {
-      value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Electron/25.0.0',
-      writable: true,
-      configurable: true,
-    })
+  it('returns desktop flags when __DESKTOP_APP__ is set', () => {
+    ;(window as any).__DESKTOP_APP__ = true
     const flags = getFeatureFlags()
     expect(flags.platform).toBe('desktop')
     expect(flags.collaboration).toBe(true)
@@ -57,7 +49,7 @@ describe('features', () => {
     expect(first).not.toBe(second)
   })
 
-  it('hasFeature returns true for enabled features', () => {
+  it('hasFeature returns correct values', () => {
     // Web mode - collaboration is disabled
     expect(hasFeature('collaboration')).toBe(false)
     // Web mode - platform is always defined

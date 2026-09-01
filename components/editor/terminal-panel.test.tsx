@@ -25,7 +25,7 @@ describe('TerminalPanel', () => {
 
   it('shows welcome message', () => {
     render(<TerminalPanel {...defaultProps} />)
-    expect(screen.getByText(/Welcome to the Codebase Terminal/)).toBeInTheDocument()
+    expect(screen.getByText(/Welcome to the Synced Terminal/)).toBeInTheDocument()
     expect(screen.getByText(/Type "help"/)).toBeInTheDocument()
   })
 
@@ -60,7 +60,7 @@ describe('TerminalPanel', () => {
     const input = screen.getByRole('textbox')
     fireEvent.change(input, { target: { value: 'clear' } })
     fireEvent.keyDown(input, { key: 'Enter' })
-    expect(screen.queryByText(/Welcome to the Codebase Terminal/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Welcome to the Synced Terminal/)).not.toBeInTheDocument()
   })
 
   it('shows error for unknown command', () => {

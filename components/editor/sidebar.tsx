@@ -18,6 +18,7 @@ import {
   MessageCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { FileIcon, FolderIcon } from '@/components/editor/file-icons'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
@@ -126,7 +127,7 @@ function SidebarSearch({ fileTree, onFileChange }: { fileTree: FolderNode; onFil
   )
 }
 
-function FileIcon({ type }: { type: FileNode['type'] }) {
+function FileBadge({ type }: { type: FileNode["type"] }) {
   switch (type) {
     case 'json':
       return <FileJson className="size-4 shrink-0 text-amber-400" />
@@ -221,7 +222,7 @@ function FolderItem({
                     }
                   }}
                 >
-                  <FileIcon type={child.type} />
+                  <FileBadge type={child.type} />
                   <span className="truncate">{child.name}</span>
                   {modifiedFiles?.has(child.name) && (
                     <span className="ml-auto size-1.5 shrink-0 rounded-full bg-orange-400" title="Unsaved changes" />
@@ -294,7 +295,7 @@ export function Sidebar({
           <div className="flex size-7 items-center justify-center rounded bg-primary text-primary-foreground">
             <Code2 className="size-4" />
           </div>
-          {!collapsed && <span className="ml-1 text-sm font-semibold tracking-tight">Codebase</span>}
+          {!collapsed && <span className="ml-1 text-sm font-semibold tracking-tight">Synced</span>}
         </button>
 
         {!collapsed && (

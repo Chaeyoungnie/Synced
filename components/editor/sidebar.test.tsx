@@ -13,14 +13,14 @@ describe('Sidebar', () => {
   it('renders workspace header when expanded', () => {
     render(<Sidebar {...defaultProps} />)
 
-    expect(screen.getByText('Codebase')).toBeInTheDocument()
+    expect(screen.getByText('Synced')).toBeInTheDocument()
     expect(screen.getByText('WORKSPACE')).toBeInTheDocument()
   })
 
   it('hides workspace header when collapsed', () => {
     render(<Sidebar {...defaultProps} collapsed />)
 
-    expect(screen.queryByText('Codebase')).not.toBeInTheDocument()
+    expect(screen.queryByText('Synced')).not.toBeInTheDocument()
     expect(screen.queryByText('WORKSPACE')).not.toBeInTheDocument()
   })
 

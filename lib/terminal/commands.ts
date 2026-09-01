@@ -293,7 +293,7 @@ export function createInitialState(): TerminalState {
   return {
     cwd: '',
     lines: [
-      makeLine('Welcome to the Codebase Terminal', 'info'),
+      makeLine('Welcome to the Synced Terminal', 'info'),
       makeLine('Type "help" for a list of available commands.', 'info'),
       makeLine(''),
     ],

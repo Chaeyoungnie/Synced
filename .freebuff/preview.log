@@ -1,0 +1,57 @@
+▲ Next.js 16.3.0 (Turbopack)
+- Local:         http://localhost:49192
+- Network:       http://192.168.1.182:49192
+- Environments: .env.local
+✓ Ready in 1157ms
+✓ Running next.config.mjs took 34ms
+
+ GET / 200 in 838ms (next.js: 346ms, proxy.ts: 148ms, application-code: 344ms)
+ GET / 200 in 79ms (next.js: 12ms, proxy.ts: 10ms, application-code: 58ms)
+ GET / 200 in 103ms (next.js: 12ms, proxy.ts: 8ms, application-code: 83ms)
+ GET /editor 200 in 3.3s (next.js: 2.6s, proxy.ts: 6ms, application-code: 755ms)
+✓ Compiled in 814ms
+ GET /editor 200 in 345ms (next.js: 106ms, proxy.ts: 131ms, application-code: 108ms)
+✓ Compiled in 497ms
+ GET /editor 200 in 97ms (next.js: 25ms, proxy.ts: 11ms, application-code: 62ms)
+✓ Compiled in 105ms
+ GET /editor 200 in 90ms (next.js: 20ms, proxy.ts: 12ms, application-code: 58ms)
+✓ Compiled in 106ms
+ GET /editor 200 in 91ms (next.js: 20ms, proxy.ts: 7ms, application-code: 63ms)
+✓ Compiled in 701ms
+✓ Compiled in 406ms
+✓ Compiled in 732ms
+ GET /editor 200 in 170ms (next.js: 44ms, proxy.ts: 32ms, application-code: 93ms)
+ GET /editor 200 in 607ms (next.js: 228ms, proxy.ts: 74ms, application-code: 305ms)
+ GET /editor 200 in 139ms (next.js: 42ms, proxy.ts: 31ms, application-code: 66ms)
+✓ Compiled in 492ms
+ GET /editor 200 in 212ms (next.js: 83ms, proxy.ts: 32ms, application-code: 97ms)
+✓ Compiled in 199ms
+ GET /editor 200 in 77ms (next.js: 17ms, proxy.ts: 8ms, application-code: 51ms)
+ GET /editor 200 in 365ms (next.js: 52ms, proxy.ts: 43ms, application-code: 270ms)
+✓ Compiled in 124ms
+✓ Compiled in 86ms
+✓ Compiled in 556ms
+ GET /editor 200 in 899ms (next.js: 73ms, proxy.ts: 735ms, application-code: 92ms)
+✓ Compiled in 597ms
+ GET /editor 200 in 217ms (next.js: 46ms, proxy.ts: 42ms, application-code: 129ms)
+✓ Compiled in 104ms
+ GET /editor 200 in 68ms (next.js: 18ms, proxy.ts: 6ms, application-code: 44ms)
+✓ Compiled in 305ms
+✓ Compiled in 158ms
+ GET /editor 200 in 75ms (next.js: 19ms, proxy.ts: 9ms, application-code: 47ms)
+✓ Compiled in 138ms
+ GET /editor 200 in 98ms (next.js: 30ms, proxy.ts: 11ms, application-code: 58ms)
+✓ Compiled in 836ms
+ GET /editor 200 in 94ms (next.js: 24ms, proxy.ts: 8ms, application-code: 62ms)
+✓ Compiled in 1053ms
+✓ Compiled in 1001ms
+✓ Compiled in 491ms
+✓ Compiled in 169ms
+✓ Compiled in 947ms
+ GET /editor 200 in 377ms (next.js: 113ms, proxy.ts: 133ms, application-code: 131ms)
+✓ Compiled in 1105ms
+✓ Compiled in 787ms
+✓ Compiled in 852ms
+ GET /editor 200 in 592ms (next.js: 186ms, proxy.ts: 178ms, application-code: 229ms)
+✓ Compiled in 391ms
+ GET /editor 200 in 641ms (next.js: 151ms, proxy.ts: 181ms, application-code: 310ms)
