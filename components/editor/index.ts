@@ -1,0 +1,5 @@
+export { PresenceAvatar } from './presence-avatar'
+export { Sidebar } from './sidebar'
+export { CodeEditor } from './code-editor'
+export { LivePreview } from './live-preview'
+export { CollaborationPanel } from './collaboration-panel'
