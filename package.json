@@ -69,11 +69,6 @@
     "electron-devtools-installer": "^3.2.0",
     "wait-on": "^8.0.3"
   },
-  "pnpm": {
-    "overrides": {
-      "hono": "4.12.25"
-    }
-  },
   "main": "electron/main.cjs",
   "build": {
     "appId": "com.freebuff.desktop",
