@@ -80,6 +80,9 @@ import { NotificationBell } from '@/components/editor/notifications'
 import { addCollaborator } from '@/lib/supabase/workspaces'
 import { TerminalPanel } from '@/components/editor/terminal-panel'
 import { GitPanel } from '@/components/editor/git-panel'
+import { TrialBanner } from '@/components/trial-banner'
+import { UpgradeDialog } from '@/components/upgrade-dialog'
+import { features } from '@/lib/features'
 import { useGit } from '@/hooks/use-git'
 
 function ResizeHandle() {
@@ -227,6 +230,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
   const [terminalOpen, setTerminalOpen] = useState(false)
   const [mobileSheet, setMobileSheet] = useState<'sidebar' | 'collab' | null>(null)
   const [gitOpen, setGitOpen] = useState(false)
+  const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false)
   const git = useGit()
   const openFile = useCallback((fileName: string) => { setActiveFile(fileName); setPresenceFile(fileName); setSaveState('unsaved'); const match = dbFiles.find(f => f.name === fileName); setActiveFileId(match?.id || null); setOpenTabs((prev) => { if (prev.some((t) => t.id === fileName)) return prev; return [...prev, { id: fileName, name: fileName, type: getFileType(fileName) }] }); setModifiedFiles((prev) => new Set(prev).add(fileName)) }, [dbFiles])
   const closeTab = useCallback((tabId: string) => { setOpenTabs((prev) => { const next = prev.filter((t) => t.id !== tabId); if (tabId === activeFile && next.length > 0) setActiveFile(next[next.length - 1].id); return next }); setModifiedFiles((prev) => { const next = new Set(prev); next.delete(tabId); return next }) }, [activeFile])
@@ -258,6 +262,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
 
   return (
     <main className="flex h-svh min-h-[600px] flex-col overflow-hidden bg-background text-foreground">
+      <TrialBanner />
       <header className="flex h-14 shrink-0 items-center border-b border-border bg-card/50 px-4">
         <div className="flex items-center gap-3">
           <Link href="/" className="flex size-7 items-center justify-center rounded bg-primary text-primary-foreground"><Sparkles className="size-3.5" /></Link>
@@ -440,6 +445,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
           userName={user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'You'}
         />
       </MobileBottomSheet>
+    <UpgradeDialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen} />
     </main>
   )
 }
