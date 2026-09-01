@@ -4,13 +4,16 @@ import Link from 'next/link'
 import { ArrowLeft, Monitor, Laptop, Terminal, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
+const GITHUB_REPO = 'https://github.com/Chaeyoungnie/collaborative-code-editor'
+const RELEASE_URL = GITHUB_REPO + '/releases/latest'
+
 const platforms = [
   {
     name: 'Windows',
     icon: Monitor,
-    format: '.exe',
+    format: '.exe installer',
     size: '~180 MB',
-    download: '#',
+    download: RELEASE_URL + '/download/Synced-Setup-1.0.0.exe',
     requirements: 'Windows 10 or later',
   },
   {
@@ -18,7 +21,7 @@ const platforms = [
     icon: Laptop,
     format: '.dmg',
     size: '~160 MB',
-    download: '#',
+    download: RELEASE_URL + '/download/Synced-1.0.0.dmg',
     requirements: 'macOS 12 or later (Intel & Apple Silicon)',
   },
   {
@@ -26,7 +29,7 @@ const platforms = [
     icon: Terminal,
     format: '.AppImage',
     size: '~150 MB',
-    download: '#',
+    download: RELEASE_URL + '/download/Synced-1.0.0.AppImage',
     requirements: 'Ubuntu 20.04+ / Fedora 36+ / Debian 11+',
   },
 ]
@@ -86,11 +89,9 @@ export default function DownloadPage() {
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mb-4">{p.requirements}</p>
-              <a href={p.download}>
-                <Button className="w-full mt-auto">
-                  Download for {p.name}
+              <Button className="w-full mt-auto" variant="outline" disabled>
+                  Coming Soon
                 </Button>
-              </a>
             </div>
           ))}
         </div>
