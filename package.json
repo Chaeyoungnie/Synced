@@ -75,7 +75,7 @@
   "main": "electron/main.cjs",
   "build": {
     "appId": "com.freebuff.desktop",
-    "productName": "Freebuff",
+    "productName": "Synced",
     "directories": {
       "output": "release"
     },
@@ -104,7 +104,9 @@
         "portable"
       ],
       "icon": "public/icon.ico",
-      "publisherName": "Freebuff"
+      "publisherName": "Synced",
+      "sign": false,
+      "signAndEditExecutable": false
     },
     "linux": {
       "target": [
@@ -119,7 +121,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Freebuff"
+      "shortcutName": "Synced"
     }
   }
 }
