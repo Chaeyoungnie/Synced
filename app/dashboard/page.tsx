@@ -169,14 +169,16 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="size-8 opacity-0 group-hover:opacity-100" />}><MoreHorizontal className="size-4" /></DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => router.push('/editor?ws=' + w.id)}><Settings2 className="size-4" /> Open</DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem variant="destructive" onClick={async () => { if (user && isSupabaseConfigured()) { await deleteWorkspace(w.id) } setAuthWs(p => p.filter(x => x.id !== w.id)) }}><Trash2 className="size-4" /> Delete</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="relative z-20">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="size-8 opacity-0 group-hover:opacity-100" onClick={(e: React.MouseEvent) => e.stopPropagation()} />}><MoreHorizontal className="size-4" /></DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => router.push('/editor?ws=' + w.id)}><Settings2 className="size-4" /> Open</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem variant="destructive" onClick={async () => { if (user && isSupabaseConfigured()) { await deleteWorkspace(w.id) } setAuthWs(p => p.filter(x => x.id !== w.id)) }}><Trash2 className="size-4" /> Delete</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
               <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">{w.description}</p>
               <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -186,10 +188,7 @@ export default function DashboardPage() {
                 </div>
                 <span className="flex items-center gap-1"><Clock className="size-3" /> {w.lastModified}</span>
               </div>
-              <button onClick={() => router.push('/editor?ws=' + w.id)} className="absolute inset-0 rounded-xl z-0" />
-              <div className="absolute inset-0 z-10 pointer-events-none">
-                <div className="absolute right-2 top-2 pointer-events-auto" />
-              </div>
+              <button onClick={() => router.push('/editor?ws=' + w.id)} className="absolute inset-0 rounded-xl z-0" aria-label={`Open ${w.name}`} />
             </div>
           ))}
           <button onClick={() => setCreateOpen(true)} className="flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-border p-5 text-muted-foreground transition-all hover:border-primary/50 hover:text-primary">
