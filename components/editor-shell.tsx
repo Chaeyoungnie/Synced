@@ -73,11 +73,11 @@ import { type FileNode, type FolderNode, flattenFileTree } from '@/components/ed
 import { useWorkspace } from '@/hooks/use-workspace'
 import { usePresence } from '@/hooks/use-presence'
 import type { RemoteCursor } from '@/lib/codemirror/remote-cursors'
-import { VersionHistoryPanel } from '@/components/editor/version-history-panel'
+
 import { useFileVersions } from '@/hooks/use-file-versions'
 import { InviteCollaboratorDialog } from '@/components/editor/invite-collaborator-dialog'
 import { NotificationBell } from '@/components/editor/notifications'
-import { addCollaborator } from '@/lib/supabase/workspaces'
+import { addCollaborator, deleteWorkspace } from '@/lib/supabase/workspaces'
 import { TerminalPanel } from '@/components/editor/terminal-panel'
 import { GitPanel } from '@/components/editor/git-panel'
 import { TrialBanner } from '@/components/trial-banner'
@@ -226,7 +226,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
   const [keybindingsOpen, setKeybindingsOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [aiOpen, setAiOpen] = useState(false)
-  const [versionHistoryOpen, setVersionHistoryOpen] = useState(false)
+
   const [activeFileId, setActiveFileId] = useState<string | null>(null)
   const { versions: fileVersions, loading: versionsLoading, restoreVersion, saveVersion } = useFileVersions(activeFileId, activeFile)
   const [renameOpen, setRenameOpen] = useState(false)
@@ -234,6 +234,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
   const [renameValue, setRenameValue] = useState('')
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState('')
+  const [deleteWsOpen, setDeleteWsOpen] = useState(false)
   const [inviteOpen, setInviteOpen] = useState(false)
   const [terminalOpen, setTerminalOpen] = useState(false)
   const [mobileSheet, setMobileSheet] = useState<'sidebar' | 'collab' | null>(null)
@@ -243,7 +244,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
   const [newFileName, setNewFileName] = useState('')
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false)
   const [upgradeReason, setUpgradeReason] = useState<string | null>(null)
-  const git = useGit()
+  const git = useGit(isDemo)
   const { openFileDialog, saveFileDialog } = useFileOps()
   
   useEffect(() => {
@@ -324,7 +325,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
           <Separator orientation="vertical" className="mx-1 h-4" />
           <Button variant="ghost" size="icon-sm" onClick={() => setAiOpen(!aiOpen)}><Bot className="size-3.5" /></Button>
           <Separator orientation="vertical" className="mx-1 h-4" />
-          <Button variant="ghost" size="icon-sm" onClick={() => setVersionHistoryOpen(!versionHistoryOpen)}><History className="size-3.5" /></Button>
+          <Button variant="ghost" size="icon-sm" onClick={() => { const n = !rightCollapsed; setRightCollapsed(n); if (collabRef.current) { if (n) collabRef.current.collapse(); else collabRef.current.expand() } }}><Users className="size-3.5" /></Button>
           <Separator orientation="vertical" className="mx-1 h-4" />
           <Button variant="ghost" size="icon-sm" onClick={() => setTerminalOpen(!terminalOpen)}><Terminal className="size-3.5" /></Button>
           <Separator orientation="vertical" className="mx-1 h-4" />
@@ -344,13 +345,16 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
           <Button variant="ghost" size="sm" className="gap-1.5 text-xs" onClick={() => setInviteOpen(true)}><UserPlus className="size-3.5" /> Invite</Button>
           <DeployButton workspaceName={workspace?.name} />
           <Button variant="ghost" size="sm" className="gap-1.5 text-xs" onClick={() => toast("Share link copied!", "success")}><Share2 className="size-3.5" /> Share</Button>
+          {!isDemo && workspaceId && (
+            <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-destructive hover:text-destructive" onClick={() => setDeleteWsOpen(true)}><Trash2 className="size-3.5" /></Button>
+          )}
         </div>
       </header>
       <div className="flex h-6 items-center border-b border-border bg-muted/30 px-4 text-[11px] text-muted-foreground">{isDemo ? "Free personal sample · changes stay in this browser" : "Connected to Supabase · " + (workspace?.name || "workspace") + " · changes saved to cloud"}{wsError && <span className="ml-auto text-red-500">{wsError}</span> || trialLimits.canAddFile === false && <span className="ml-auto text-amber-500">File limit reached ({allFiles.length}/5)</span>}{trialLimits.canAddFile && !trialLimits.canUseCollaboration && <span className="ml-auto">{allFiles.length}/{trialLimits.fileCount === Infinity ? '∞' : 5} files</span>}</div>
       <PanelGroup direction="vertical" className="flex-1">
         <Panel defaultSize={terminalOpen ? 70 : 100} minSize={40}>
           <PanelGroup direction="horizontal">
-            <Panel defaultSize={15} minSize={3} collapsedSize={3} onCollapse={() => setLeftCollapsed(true)} onExpand={() => setLeftCollapsed(false)}>
+            <Panel ref={sidebarRef} defaultSize={15} minSize={3} collapsedSize={3} onCollapse={() => setLeftCollapsed(true)} onExpand={() => setLeftCollapsed(false)}>
               <Sidebar fileTree={wsFileTree} collaboratorList={presenceCollaborators.length > 0 ? presenceCollaborators : wsCollaborators} collapsed={leftCollapsed} onToggle={() => { const n = !leftCollapsed; setLeftCollapsed(n); if (sidebarRef.current) { if (n) sidebarRef.current.collapse(); else sidebarRef.current.expand() } }} activeFile={activeFile} onFileChange={openFile} onNewFile={() => handleNewFile()} onFileRename={(name) => { setRenameTarget(name); setRenameValue(name); setRenameOpen(true) }} onFileDelete={(name) => { setDeleteTarget(name); setDeleteOpen(true) }} modifiedFiles={modifiedFiles} />
             </Panel>
             <ResizeHandle />
@@ -392,7 +396,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
               </PanelGroup>
             </Panel>
             <ResizeHandle />
-            <Panel defaultSize={20} minSize={3} collapsedSize={3} onCollapse={() => setRightCollapsed(true)} onExpand={() => setRightCollapsed(false)}>
+            <Panel ref={collabRef} defaultSize={20} minSize={3} collapsedSize={3} onCollapse={() => setRightCollapsed(true)} onExpand={() => setRightCollapsed(false)}>
               <CollaborationPanel collaboratorList={presenceCollaborators.length > 0 ? presenceCollaborators : wsCollaborators} open={!rightCollapsed} onToggle={() => { const n = !rightCollapsed; setRightCollapsed(n); if (collabRef.current) { if (n) collabRef.current.collapse(); else collabRef.current.expand() } }} workspaceId={workspaceId} userName={user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'You'} />
             </Panel>
           </PanelGroup>
@@ -416,23 +420,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
       <KeybindingsModal open={keybindingsOpen} onOpenChange={setKeybindingsOpen} mod={mod} />
       <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
       <AIAssistant open={aiOpen} onToggle={() => setAiOpen(!aiOpen)} activeFile={activeFile} fileContent={contents[activeFile] || ""} onApplyCode={(code: string) => { setContents((prev) => ({ ...prev, [activeFile]: code })) }} />
-      {versionHistoryOpen && (
-        <div className="absolute right-0 top-14 bottom-0 z-30 w-72">
-          <VersionHistoryPanel
-            open={versionHistoryOpen}
-            onToggle={() => setVersionHistoryOpen(false)}
-            versions={fileVersions}
-            loading={versionsLoading}
-            currentFileName={activeFile}
-            currentContent={contents[activeFile] || ''}
-            onRestore={(content) => {
-              setContents(prev => ({ ...prev, [activeFile]: content }))
-              setSaveState('unsaved')
-              toast('Version restored', 'success')
-            }}
-          />
-        </div>
-      )}
+
       {gitOpen && (
         <div className="absolute right-0 top-14 bottom-0 z-30 w-80">
           <GitPanel
@@ -537,6 +525,32 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
           <DialogFooter>
             <Button variant="outline" onClick={() => setNewFileOpen(false)}>Cancel</Button>
             <Button onClick={confirmNewFile} disabled={!newFileName.trim()}>Create</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* Delete Workspace Dialog */}
+      <Dialog open={deleteWsOpen} onOpenChange={setDeleteWsOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete workspace</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete &quot;{workspace?.name}&quot;? This action cannot be undone. All files and data will be permanently deleted.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteWsOpen(false)}>Cancel</Button>
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                if (workspaceId) {
+                  await deleteWorkspace(workspaceId)
+                  toast('Workspace deleted', 'success')
+                  router.push('/dashboard')
+                }
+              }}
+            >
+              Delete workspace
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

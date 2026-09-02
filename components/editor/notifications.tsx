@@ -44,36 +44,7 @@ export function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false)
   const [hasNew, setHasNew] = useState(false)
 
-  // Simulate incoming notifications
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const initial = DEMO_NOTIFICATIONS.slice(0, 2).map((n, i) => ({
-        ...n,
-        id: `n-${i}`,
-        timestamp: new Date(Date.now() - (i + 1) * 120000),
-        read: false,
-      }))
-      setNotifications(initial)
-      setHasNew(true)
-    }, 3000)
-    return () => clearTimeout(timer)
-  }, [])
-
-  // Simulate periodic notifications
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const random = DEMO_NOTIFICATIONS[Math.floor(Math.random() * DEMO_NOTIFICATIONS.length)]
-      const newNotif: Notification = {
-        ...random,
-        id: `n-${Date.now()}`,
-        timestamp: new Date(),
-        read: false,
-      }
-      setNotifications(prev => [newNotif, ...prev].slice(0, 20))
-      setHasNew(true)
-    }, 30000)
-    return () => clearInterval(interval)
-  }, [])
+  // No simulated notifications — only real ones will appear
 
   const unreadCount = notifications.filter(n => !n.read).length
 
