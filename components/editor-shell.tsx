@@ -239,6 +239,8 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
   const [mobileSheet, setMobileSheet] = useState<'sidebar' | 'collab' | null>(null)
   const [gitOpen, setGitOpen] = useState(false)
   const [findOpen, setFindOpen] = useState(false)
+  const [newFileOpen, setNewFileOpen] = useState(false)
+  const [newFileName, setNewFileName] = useState('')
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false)
   const [upgradeReason, setUpgradeReason] = useState<string | null>(null)
   const git = useGit()
@@ -263,7 +265,8 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
       return next
     })
   }, [])
-  const handleNewFile = useCallback((name?: string) => { if (!trialLimits.canAddFile) { setUpgradeReason(trialLimits.upgradeReason); setUpgradeDialogOpen(true); return; }; const fileName = name || 'untitled.tsx'; wsCreateFile(fileName, 'code'); openFile(fileName); setContents((prev) => ({ ...prev, [fileName]: '' })) }, [openFile, trialLimits.canAddFile, trialLimits.upgradeReason])
+  const handleNewFile = useCallback(() => { if (!trialLimits.canAddFile) { setUpgradeReason(trialLimits.upgradeReason); setUpgradeDialogOpen(true); return; }; setNewFileName(''); setNewFileOpen(true) }, [trialLimits.canAddFile, trialLimits.upgradeReason])
+  const confirmNewFile = useCallback(() => { const trimmed = newFileName.trim(); if (!trimmed) return; const fileName = trimmed.includes('.') ? trimmed : trimmed + '.tsx'; wsCreateFile(fileName, 'code'); openFile(fileName); setContents((prev) => ({ ...prev, [fileName]: '' })); setNewFileOpen(false); setNewFileName(''); toast('File created', 'success') }, [newFileName, openFile, toast])
   useBeforeUnload(modifiedFiles.size > 0)
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -517,7 +520,27 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
           workspaceId={workspaceId}
           userName={user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'You'}
         />
-      </MobileBottomSheet>      <UpgradeDialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen} reason={upgradeReason} />
+      </MobileBottomSheet>      {/* New File Dialog */}
+      <Dialog open={newFileOpen} onOpenChange={setNewFileOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create new file</DialogTitle>
+            <DialogDescription>Enter a name for your new file.</DialogDescription>
+          </DialogHeader>
+          <Input
+            autoFocus
+            placeholder="e.g. index.tsx"
+            value={newFileName}
+            onChange={(e) => setNewFileName(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') confirmNewFile() }}
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setNewFileOpen(false)}>Cancel</Button>
+            <Button onClick={confirmNewFile} disabled={!newFileName.trim()}>Create</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <UpgradeDialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen} reason={upgradeReason} />
     </main>
   )
 }
