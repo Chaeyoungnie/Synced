@@ -49,7 +49,7 @@ jobs:
         run: pnpm tsc --noEmit
 
       - name: Run tests
-        run: pnpm vitest run --reporter=verbose --pool=forks --poolOptions.forks.singleFork
+        run: pnpm vitest run --reporter=verbose
 
       - name: Build
         run: pnpm build
