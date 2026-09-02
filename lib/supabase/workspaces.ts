@@ -14,6 +14,24 @@ export async function createWorkspace(name: string, description?: string) {
   
   if (!user) throw new Error('Not authenticated')
 
+  // First, ensure the user has a profile
+  const { data: existingProfile } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('id', user.id)
+    .single()
+
+  if (!existingProfile) {
+    // Create profile if it doesn't exist
+    await supabase
+      .from('profiles')
+      .insert({
+        id: user.id,
+        full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+        avatar_url: user.user_metadata?.avatar_url || null,
+      })
+  }
+
   const { data, error } = await supabase
     .from('workspaces')
     .insert({ name, description, owner_id: user.id })
@@ -29,16 +47,18 @@ export async function getWorkspaces() {
   
   if (!user) throw new Error('Not authenticated')
 
-  const { data, error } = await supabase
+  // Simple query first - just get workspaces owned by the user
+  const { data: ownedWorkspaces, error: ownedError } = await supabase
     .from('workspaces')
-    .select(`
-      *,
-      collaborators!inner(user_id, role, profiles:user_id(full_name, avatar_url))
-    `)
-    .or(`owner_id.eq.${user.id},collaborators.user_id.eq.${user.id}`)
+    .select('*')
+    .eq('owner_id', user.id)
     .order('updated_at', { ascending: false })
 
-  return { data, error }
+  if (ownedError) {
+    return { data: null, error: ownedError }
+  }
+
+  return { data: ownedWorkspaces || [], error: null }
 }
 
 export async function getWorkspace(workspaceId: string) {
@@ -46,10 +66,7 @@ export async function getWorkspace(workspaceId: string) {
 
   const { data, error } = await supabase
     .from('workspaces')
-    .select(`
-      *,
-      collaborators(user_id, role, profiles:user_id(full_name, avatar_url, email))
-    `)
+    .select('*')
     .eq('id', workspaceId)
     .single()
 
@@ -108,13 +125,19 @@ export async function getFile(fileId: string) {
   return { data, error }
 }
 
-export async function createFile(workspaceId: string, file: Omit<Database['public']['Tables']['files']['Insert'], 'workspace_id'>) {
+export async function createFile(workspaceId: string, file: { name: string; path: string; content?: string; language?: string }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   const { data, error } = await supabase
     .from('files')
-    .insert({ ...file, workspace_id: workspaceId, created_by: user?.id })
+    .insert({
+      workspace_id: workspaceId,
+      name: file.name,
+      path: file.path,
+      content: file.content || '',
+      language: file.language || 'plaintext',
+    })
     .select()
     .single()
 
@@ -126,7 +149,7 @@ export async function updateFileContent(fileId: string, content: string) {
 
   const { data, error } = await supabase
     .from('files')
-    .update({ content, git_status: 'modified' })
+    .update({ content })
     .eq('id', fileId)
     .select()
     .single()
@@ -149,14 +172,14 @@ export async function deleteFile(fileId: string) {
 // COLLABORATOR OPERATIONS
 // ============================================
 
-export async function addCollaborator(workspaceId: string, email: string, role: Database['public']['Tables']['collaborators']['Insert']['role'] = 'viewer') {
+export async function addCollaborator(workspaceId: string, email: string, role: string = 'viewer') {
   const supabase = createClient()
   
-  // First find the user by email
+  // First find the user by email in profiles
   const { data: profile } = await supabase
     .from('profiles')
     .select('id')
-    .eq('email', email)
+    .eq('full_name', email)
     .single()
 
   if (!profile) throw new Error('User not found')
@@ -206,7 +229,7 @@ export function subscribeToFiles(workspaceId: string, callback: (file: File) => 
     .subscribe()
 }
 
-export function subscribeToMessages(workspaceId: string, callback: (message: Database['public']['Tables']['messages']['Row']) => void) {
+export function subscribeToMessages(workspaceId: string, callback: (message: { id: string; content: string; user_id: string; created_at: string }) => void) {
   const supabase = createClient()
 
   return supabase
@@ -217,7 +240,7 @@ export function subscribeToMessages(workspaceId: string, callback: (message: Dat
       table: 'messages',
       filter: `workspace_id=eq.${workspaceId}`,
     }, (payload) => {
-      callback(payload.new as Database['public']['Tables']['messages']['Row'])
+      callback(payload.new as { id: string; content: string; user_id: string; created_at: string })
     })
     .subscribe()
 }

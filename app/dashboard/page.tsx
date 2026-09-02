@@ -43,28 +43,27 @@ export default function DashboardPage() {
   const loadWorkspaces = useCallback(async () => {
     if (!user || !isSupabaseConfigured()) { setLoading(false); return }
     try {
-      // Fetch workspaces with file counts
+      // Fetch workspaces
       const { data: workspaces, error: wsError } = await getWorkspaces()
       if (wsError || !workspaces) { setLoading(false); return }
-      // Get file counts for each workspace
-      const mapped: Workspace[] = await Promise.all(workspaces.map(async (w: any) => {
-        const { count } = await (await import('@/lib/supabase/client')).createClient()
-          .from('files')
-          .select('*', { count: 'exact', head: true })
-          .eq('workspace_id', w.id)
-        return {
-          id: w.id, name: w.name, description: w.description || '',
-          fileCount: count || 0,
-          collaboratorCount: w.collaborators?.length || 1,
-          lastModified: w.updated_at ? new Date(w.updated_at).toLocaleDateString() : 'Never',
-          isPublic: w.is_public || false,
-          language: 'TypeScript',
-          color: '#6366f1',
-        }
+      
+      // Map workspaces
+      const mapped: Workspace[] = workspaces.map((w: any) => ({
+        id: w.id, 
+        name: w.name, 
+        description: w.description || '',
+        fileCount: 0,
+        collaboratorCount: 1,
+        lastModified: w.updated_at ? new Date(w.updated_at).toLocaleDateString() : 'Never',
+        isPublic: w.is_public || false,
+        language: 'TypeScript',
+        color: '#6366f1',
       }))
 
       setAuthWs(mapped)
-    } catch {}
+    } catch (e) {
+      console.error('Error loading workspaces:', e)
+    }
     setLoading(false)
   }, [user])
 
