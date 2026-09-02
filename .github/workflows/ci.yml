@@ -11,6 +11,8 @@ jobs:
     name: Test & Type Check
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      NODE_OPTIONS: '--max-old-space-size=4096'
 
     steps:
       - name: Checkout code
@@ -47,14 +49,11 @@ jobs:
         run: pnpm tsc --noEmit
 
       - name: Run tests
-        run: pnpm vitest run --reporter=verbose
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+        run: pnpm vitest run --reporter=verbose --pool=forks --poolOptions.forks.singleFork
 
       - name: Build
         run: pnpm build
         env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
