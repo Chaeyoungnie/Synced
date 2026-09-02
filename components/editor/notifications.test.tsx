@@ -33,14 +33,11 @@ describe('NotificationBell', () => {
     if (backdrop) fireEvent.click(backdrop)
   })
 
-  it('shows notifications after loading', async () => {
+  it('shows empty state when no real notifications', async () => {
     render(<NotificationBell />)
     const button = screen.getAllByRole('button')[0]
     fireEvent.click(button)
-    // Wait for notifications to load
-    await waitFor(() => {
-      const hasNotifs = screen.queryByText('Sarah Chen') || screen.queryByText('No notifications yet')
-      expect(hasNotifs).toBeTruthy()
-    }, { timeout: 5000 })
+    // Should show empty state since we removed simulated notifications
+    expect(screen.getByText('No notifications yet')).toBeInTheDocument()
   })
 })

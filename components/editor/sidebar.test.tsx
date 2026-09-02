@@ -1,6 +1,24 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import { Sidebar } from './sidebar'
+import type { FolderNode } from './data'
+
+const testFileTree: FolderNode = {
+  name: 'workspace',
+  open: true,
+  children: [
+    { name: 'page.tsx', type: 'code', status: 'committed' },
+    { name: 'editor-shell.tsx', type: 'code', status: 'modified' },
+    { name: 'globals.css', type: 'css', status: 'committed' },
+    {
+      name: 'components',
+      open: true,
+      children: [
+        { name: 'sidebar.tsx', type: 'code', status: 'committed' },
+      ],
+    },
+  ],
+}
 
 describe('Sidebar', () => {
   const defaultProps = {
@@ -8,6 +26,7 @@ describe('Sidebar', () => {
     onToggle: vi.fn(),
     activeFile: 'page.tsx',
     onFileChange: vi.fn(),
+    fileTree: testFileTree,
   }
 
   it('renders workspace header when expanded', () => {
@@ -75,20 +94,18 @@ describe('Sidebar', () => {
     render(<Sidebar {...defaultProps} />)
 
     expect(screen.getByText('COLLABORATORS')).toBeInTheDocument()
-    expect(screen.getByText('4')).toBeInTheDocument() // badge count
+    expect(screen.getByText('4')).toBeInTheDocument()
   })
 
   it('toggles folder when clicking folder name', () => {
     render(<Sidebar {...defaultProps} />)
 
-    // Find the components folder button by looking for its text within a button
     const folderButtons = screen.getAllByText('components')
     const folderButton = folderButtons.find((el) => el.closest('button'))?.closest('button')
     expect(folderButton).toBeInTheDocument()
-    
+
     if (folderButton) {
       fireEvent.click(folderButton)
-      // Folder should toggle (visual state changes)
       expect(folderButton).toBeInTheDocument()
     }
   })
@@ -98,5 +115,12 @@ describe('Sidebar', () => {
 
     expect(screen.getByText('modified')).toBeInTheDocument()
     expect(screen.getByText('new')).toBeInTheDocument()
+  })
+
+  it('shows no files message when fileTree is empty', () => {
+    const emptyTree: FolderNode = { name: 'workspace', open: true, children: [] }
+    render(<Sidebar {...defaultProps} fileTree={emptyTree} />)
+
+    expect(screen.getByText('No files yet')).toBeInTheDocument()
   })
 })
