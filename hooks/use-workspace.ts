@@ -126,13 +126,30 @@ export function useWorkspace(workspaceId?: string | null) {
     if (saveTimers.current[fileName]) clearTimeout(saveTimers.current[fileName])
     saveTimers.current[fileName] = setTimeout(async () => {
       const file = filesRef.current.find(f => f.name === fileName)
-      if (!file) return
       const attemptSave = async (attempt: number) => {
         try {
           const supabase = createClient()
-          const { error: saveError } = await supabase.from("files").update({ content, git_status: "modified" }).eq("id", file.id)
-          if (saveError) throw saveError
-          setDbFiles(prev => prev.map(f => f.id === file.id ? { ...f, content, git_status: "modified" as GitStatus } : f))
+          if (file) {
+            // File exists — update it
+            const { error: saveError } = await supabase.from("files").update({ content, git_status: "modified" }).eq("id", file.id)
+            if (saveError) throw saveError
+            setDbFiles(prev => prev.map(f => f.id === file.id ? { ...f, content, git_status: "modified" as GitStatus } : f))
+          } else if (workspaceId) {
+            // File doesn't exist yet (create still in progress) — insert it
+            const fileType = fileName.endsWith('.css') ? 'css' : fileName.endsWith('.json') ? 'json' : 'typescript'
+            const { data, error: insertError } = await supabase.from("files").insert({
+              workspace_id: workspaceId,
+              name: fileName,
+              path: '/' + fileName,
+              content,
+              language: fileType,
+              git_status: 'modified',
+            }).select().single()
+            if (insertError) throw insertError
+            if (data) {
+              setDbFiles(prev => [...prev, data as unknown as WorkspaceFile])
+            }
+          }
           retryCount.current[fileName] = 0
         } catch (e) {
           if (attempt < MAX_RETRIES) {
@@ -147,14 +164,14 @@ export function useWorkspace(workspaceId?: string | null) {
     }, 1000)
   }, [isDemo])
 
-  const createFile = useCallback(async (name: string, type: string = "code") => {
-    setFileContents(prev => ({ ...prev, [name]: "" }))
+  const createFile = useCallback(async (name: string, type: string = "code", initialContent: string = "") => {
+    setFileContents(prev => ({ ...prev, [name]: initialContent }))
     setFileTree(prev => ({ ...prev, children: [...prev.children, { name, type: type as any, status: "new" } as FileNode] }))
     if (isDemo || !workspaceId || !workspace) return
     try {
       const supabase = createClient()
       const fileType = name.endsWith('.css') ? 'css' : name.endsWith('.json') ? 'json' : 'typescript'
-      const { data } = await supabase.from("files").insert({ workspace_id: workspaceId, name, path: "/" + name, content: "", language: fileType, git_status: "new" }).select().single()
+      const { data } = await supabase.from("files").insert({ workspace_id: workspaceId, name, path: "/" + name, content: initialContent, language: fileType, git_status: "new" }).select().single()
       if (data) {
         setDbFiles(prev => [...prev, data as unknown as WorkspaceFile])
         logActivity(workspaceId, 'file_created', { fileName: name })
