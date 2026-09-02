@@ -252,6 +252,11 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
   useEffect(() => {
     if (workspace?.name) setTitleValue(workspace.name)
   }, [workspace?.name])
+
+  // Sync contents when workspace file contents change
+  useEffect(() => {
+    setContents(wsFileContents)
+  }, [wsFileContents])
   
   const allFiles = flattenFileTree(wsFileTree)
   const trialLimits = useTrialLimits(allFiles.length)
