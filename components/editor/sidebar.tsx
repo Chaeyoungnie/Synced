@@ -319,19 +319,18 @@ export function Sidebar({
       </div>
 
       {collapsed ? (
-        <div className="flex flex-1 flex-col items-center gap-1 py-3 text-muted-foreground">
-          {/* Expanded icon row — each one expands the sidebar on click */}
+        <div className="flex flex-1 flex-col items-center gap-1 py-2 text-muted-foreground">
           <Tooltip>
             <TooltipTrigger
               render={
                 <button
                   onClick={onToggle}
-                  className="flex size-10 items-center justify-center rounded-lg transition-colors hover:bg-accent hover:text-foreground"
+                  className="flex size-8 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-foreground"
                 />
               }
               aria-label="Expand sidebar"
             >
-              <Search className="size-4" />
+              <Search className="size-3.5" />
             </TooltipTrigger>
             <TooltipContent side="right">Search & browse files</TooltipContent>
           </Tooltip>
@@ -341,12 +340,12 @@ export function Sidebar({
               render={
                 <button
                   onClick={onToggle}
-                  className="flex size-10 items-center justify-center rounded-lg text-primary transition-colors hover:bg-accent hover:text-foreground"
+                  className="flex size-8 items-center justify-center rounded-md text-primary transition-colors hover:bg-accent hover:text-foreground"
                 />
               }
               aria-label="Expand sidebar"
             >
-              <FolderOpen className="size-4" />
+              <FolderOpen className="size-3.5" />
             </TooltipTrigger>
             <TooltipContent side="right">Browse files</TooltipContent>
           </Tooltip>
@@ -356,42 +355,39 @@ export function Sidebar({
               render={
                 <button
                   onClick={onToggle}
-                  className="flex size-10 items-center justify-center rounded-lg transition-colors hover:bg-accent hover:text-foreground"
+                  className="flex size-8 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-foreground"
                 />
               }
               aria-label="Expand sidebar"
             >
-              <Users className="size-4" />
+              <Users className="size-3.5" />
             </TooltipTrigger>
             <TooltipContent side="right">Collaborators</TooltipContent>
           </Tooltip>
 
-          <Separator className="my-2 w-6" />
+          <Separator className="my-1 w-5" />
 
           <button
             onClick={onMobileSheetToggle}
-            className="md:hidden flex size-10 flex-col items-center justify-center rounded-lg transition-colors hover:bg-accent hover:text-foreground"
+            className="md:hidden flex size-8 flex-col items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-foreground"
             aria-label="Collaboration"
           >
-            <MessageCircle className="size-4" />
-            <span className="text-[9px]">Chat</span>
+            <MessageCircle className="size-3.5" />
           </button>
 
-          {/* Spacer pushes expand button to bottom */}
           <div className="flex-1" />
 
-          {/* Expand button at the bottom of collapsed sidebar */}
           <Tooltip>
             <TooltipTrigger
               render={
                 <button
                   onClick={onToggle}
-                  className="mb-2 flex size-10 items-center justify-center rounded-lg border border-border transition-colors hover:bg-accent hover:text-foreground hover:border-primary/30"
+                  className="mb-1 flex size-8 items-center justify-center rounded-md border border-border transition-colors hover:bg-accent hover:text-foreground hover:border-primary/30"
                 />
               }
               aria-label="Expand sidebar"
             >
-              <ChevronRight className="size-4" />
+              <ChevronRight className="size-3.5" />
             </TooltipTrigger>
             <TooltipContent side="right">Expand sidebar</TooltipContent>
           </Tooltip>

@@ -99,29 +99,10 @@ export function CollaborationPanel({
         'flex h-full flex-col border-l border-border bg-sidebar overflow-hidden min-w-0 w-full',
       )}
     >
-      <div className="flex h-14 items-center border-b border-border px-3">
-        {open ? (
-          <>
-            <PanelRight className="size-4 text-primary" />
-            <span className="ml-2 text-sm font-semibold">Collaboration</span>
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={onToggle}
-                    className="ml-auto text-muted-foreground"
-                  />
-                }
-                aria-label="Collapse collaboration panel"
-              >
-                <ChevronRight className="size-4" />
-              </TooltipTrigger>
-              <TooltipContent>Collapse panel</TooltipContent>
-            </Tooltip>
-          </>
-        ) : (
+      {open ? (
+        <div className="flex h-14 items-center border-b border-border px-3">
+          <PanelRight className="size-4 text-primary" />
+          <span className="ml-2 text-sm font-semibold">Collaboration</span>
           <Tooltip>
             <TooltipTrigger
               render={
@@ -129,7 +110,26 @@ export function CollaborationPanel({
                   variant="ghost"
                   size="icon-sm"
                   onClick={onToggle}
-                  className="mx-auto text-muted-foreground"
+                  className="ml-auto text-muted-foreground"
+                />
+              }
+              aria-label="Collapse collaboration panel"
+            >
+              <ChevronRight className="size-4" />
+            </TooltipTrigger>
+            <TooltipContent>Collapse panel</TooltipContent>
+          </Tooltip>
+        </div>
+      ) : (
+        <div className="flex h-14 items-center justify-center border-b border-border">
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={onToggle}
+                  className="text-muted-foreground"
                 />
               }
               aria-label="Expand collaboration panel"
@@ -138,8 +138,8 @@ export function CollaborationPanel({
             </TooltipTrigger>
             <TooltipContent side="left">Expand panel</TooltipContent>
           </Tooltip>
-        )}
-      </div>
+        </div>
+      )}
 
       {open && (
         <div className="flex min-h-0 flex-1 flex-col p-4">

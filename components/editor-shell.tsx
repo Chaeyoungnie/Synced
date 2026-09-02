@@ -354,7 +354,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
       <PanelGroup direction="vertical" className="flex-1">
         <Panel defaultSize={terminalOpen ? 70 : 100} minSize={40}>
           <PanelGroup direction="horizontal">
-            <Panel ref={sidebarRef} defaultSize={15} minSize={3} collapsedSize={3} onCollapse={() => setLeftCollapsed(true)} onExpand={() => setLeftCollapsed(false)}>
+            <Panel ref={sidebarRef} defaultSize={15} minSize={3} collapsedSize={3} collapsible onCollapse={() => setLeftCollapsed(true)} onExpand={() => setLeftCollapsed(false)}>
               <Sidebar fileTree={wsFileTree} collaboratorList={presenceCollaborators.length > 0 ? presenceCollaborators : wsCollaborators} collapsed={leftCollapsed} onToggle={() => { const n = !leftCollapsed; setLeftCollapsed(n); if (sidebarRef.current) { if (n) sidebarRef.current.collapse(); else sidebarRef.current.expand() } }} activeFile={activeFile} onFileChange={openFile} onNewFile={() => handleNewFile()} onFileRename={(name) => { setRenameTarget(name); setRenameValue(name); setRenameOpen(true) }} onFileDelete={(name) => { setDeleteTarget(name); setDeleteOpen(true) }} modifiedFiles={modifiedFiles} />
             </Panel>
             <ResizeHandle />
@@ -396,7 +396,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
               </PanelGroup>
             </Panel>
             <ResizeHandle />
-            <Panel ref={collabRef} defaultSize={20} minSize={3} collapsedSize={3} onCollapse={() => setRightCollapsed(true)} onExpand={() => setRightCollapsed(false)}>
+            <Panel ref={collabRef} defaultSize={20} minSize={3} collapsedSize={3} collapsible onCollapse={() => setRightCollapsed(true)} onExpand={() => setRightCollapsed(false)}>
               <CollaborationPanel collaboratorList={presenceCollaborators.length > 0 ? presenceCollaborators : wsCollaborators} open={!rightCollapsed} onToggle={() => { const n = !rightCollapsed; setRightCollapsed(n); if (collabRef.current) { if (n) collabRef.current.collapse(); else collabRef.current.expand() } }} workspaceId={workspaceId} userName={user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'You'} />
             </Panel>
           </PanelGroup>
