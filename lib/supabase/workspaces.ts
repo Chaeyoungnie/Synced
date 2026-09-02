@@ -180,14 +180,37 @@ export async function deleteFile(fileId: string) {
 export async function addCollaborator(workspaceId: string, email: string, role: string = 'viewer') {
   const supabase = createClient()
   
-  // First find the user by email in profiles
+  // Find the user by email (check profiles.email first, then auth email)
   const { data: profile } = await supabase
     .from('profiles')
     .select('id')
-    .eq('full_name', email)
+    .eq('email', email)
     .single()
 
-  if (!profile) throw new Error('User not found')
+  if (!profile) {
+    // Try searching by full_name as fallback (in case email isn't set)
+    const { data: nameProfile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('full_name', email)
+      .single()
+    
+    if (!nameProfile) throw new Error('No user found with that email. They may need to sign up first.')
+    
+    // Use the name profile
+    const { data, error } = await supabase
+      .from('collaborators')
+      .insert({
+        workspace_id: workspaceId,
+        user_id: nameProfile.id,
+        role,
+      })
+      .select()
+      .single()
+    
+    if (error) throw error
+    return { data, error }
+  }
 
   const { data, error } = await supabase
     .from('collaborators')
@@ -199,6 +222,7 @@ export async function addCollaborator(workspaceId: string, email: string, role: 
     .select()
     .single()
 
+  if (error) throw error
   return { data, error }
 }
 
@@ -212,6 +236,39 @@ export async function removeCollaborator(workspaceId: string, userId: string) {
     .eq('user_id', userId)
 
   return { error }
+}
+
+export async function searchUsers(query: string) {
+  if (!query || query.length < 2) return []
+  const supabase = createClient()
+  
+  // Search profiles by email or full_name (case-insensitive)
+  const { data } = await supabase
+    .from('profiles')
+    .select('id, full_name, email, avatar_url')
+    .or(`email.ilike.%${query}%,full_name.ilike.%${query}%`)
+    .limit(10)
+
+  return data || []
+}
+
+export async function getCollaborators(workspaceId: string) {
+  const supabase = createClient()
+  
+  const { data } = await supabase
+    .from('collaborators')
+    .select('id, user_id, role, created_at, profiles:user_id(full_name, email, avatar_url)')
+    .eq('workspace_id', workspaceId)
+
+  return (data || []).map((c: any) => ({
+    id: c.id,
+    userId: c.user_id,
+    name: c.profiles?.full_name || 'Unknown',
+    email: c.profiles?.email || '',
+    avatar: c.profiles?.avatar_url || null,
+    role: c.role,
+    joinedAt: c.created_at,
+  }))
 }
 
 // ============================================

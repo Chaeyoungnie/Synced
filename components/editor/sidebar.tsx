@@ -293,7 +293,7 @@ export function Sidebar({
   collaboratorList?: { name: string; initials: string; color: string; role: string; status: string }[]
   filePresenceMap?: Record<string, { name: string; initials: string; color: string }[]>
 }) {
-  const activeCollaborators = collaboratorList || defaultCollaborators
+  const activeCollaborators = collaboratorList || []
 
   const [folderState, setFolderState] = useState<Record<string, boolean>>({
     'collaborative-editor': true,

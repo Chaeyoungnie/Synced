@@ -15,13 +15,6 @@ interface Notification {
   read: boolean
 }
 
-const DEMO_NOTIFICATIONS: Omit<Notification, 'id' | 'timestamp' | 'read'>[] = [
-  { type: 'file_edit', user: 'Sarah Chen', message: 'Updated imports in', file: 'page.tsx' },
-  { type: 'comment', user: 'Alex Morgan', message: 'Left a comment on', file: 'globals.css' },
-  { type: 'join', user: 'Maya Patel', message: 'Joined the workspace' },
-  { type: 'commit', user: 'Sarah Chen', message: 'Committed changes to', file: 'editor-shell.tsx' },
-]
-
 function getNotificationIcon(type: Notification['type']) {
   switch (type) {
     case 'file_edit': return <FileCode2 className="size-3.5 text-amber-400" />
