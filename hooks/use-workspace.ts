@@ -62,10 +62,13 @@ function filesToContentMap(files: WorkspaceFile[]): Record<string, string> {
   return map
 }
 
+const emptyTree: FolderNode = { name: 'workspace', open: true, children: [] }
+
 export function useWorkspace(workspaceId?: string | null) {
-  const [fileTree, setFileTree] = useState<FolderNode>(mockFileTree)
-  const [fileContents, setFileContents] = useState<Record<string, string>>({ ...mockFileContents })
-  const [collaborators, setCollaborators] = useState<CollaboratorData[]>(mockCollaborators)
+  const startEmpty = !!workspaceId
+  const [fileTree, setFileTree] = useState<FolderNode>(startEmpty ? emptyTree : mockFileTree)
+  const [fileContents, setFileContents] = useState<Record<string, string>>(startEmpty ? {} : { ...mockFileContents })
+  const [collaborators, setCollaborators] = useState<CollaboratorData[]>(startEmpty ? [] : mockCollaborators)
   const [workspace, setWorkspace] = useState<WorkspaceData | null>(null)
   const [dbFiles, setDbFiles] = useState<WorkspaceFile[]>([])
   const [loading, setLoading] = useState(true)

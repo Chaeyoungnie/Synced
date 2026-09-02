@@ -210,10 +210,11 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
   const sidebarRef = useRef<ImperativePanelHandle>(null)
   const [rightCollapsed, setRightCollapsed] = useState(false)
   const collabRef = useRef<ImperativePanelHandle>(null)
-  const [activeFile, setActiveFile] = useState('page.tsx')
+  const startEmpty = !!workspaceId
+  const [activeFile, setActiveFile] = useState(startEmpty ? '' : 'page.tsx')
   const remoteCursors: RemoteCursor[] = onlineUsers.filter(u => u.id !== user?.id && u.activeFile === activeFile && u.cursorLine !== null).map(u => ({ id: u.id, name: u.name.split(' ')[0], color: u.color, line: u.cursorLine || 1, col: u.cursorCol || 1 }))
   const [contents, setContents] = useState<Record<string, string>>({ ...wsFileContents })
-  const [openTabs, setOpenTabs] = useState<Tab[]>([{ id: 'page.tsx', name: 'page.tsx', type: 'code' }])
+  const [openTabs, setOpenTabs] = useState<Tab[]>(startEmpty ? [] : [{ id: 'page.tsx', name: 'page.tsx', type: 'code' }])
   const [modifiedFiles, setModifiedFiles] = useState<Set<string>>(new Set())
   const [editingTitle, setEditingTitle] = useState(false)
   const [titleValue, setTitleValue] = useState('Collaborative Editor')
