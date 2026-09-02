@@ -207,6 +207,15 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
   const { toast } = useToast()
   const { user, signOut } = useUser()
   const router = useRouter()
+
+  // Build filePresenceMap: which users are editing which files
+  const filePresenceMap: Record<string, { name: string; initials: string; color: string }[]> = {}
+  for (const u of onlineUsers) {
+    if (u.activeFile && u.id !== user?.id) {
+      if (!filePresenceMap[u.activeFile]) filePresenceMap[u.activeFile] = []
+      filePresenceMap[u.activeFile].push({ name: u.name, initials: u.initials, color: u.color })
+    }
+  }
   const [leftCollapsed, setLeftCollapsed] = useState(false)
   const sidebarRef = useRef<ImperativePanelHandle>(null)
   const [rightCollapsed, setRightCollapsed] = useState(false)
@@ -257,6 +266,14 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
   useEffect(() => {
     setContents(wsFileContents)
   }, [wsFileContents])
+
+  // Handle content changes from CodeMirror editor
+  const handleContentChange = useCallback((fileName: string, value: string) => {
+    setContents(prev => ({ ...prev, [fileName]: value }))
+    setModifiedFiles(prev => new Set(prev).add(fileName))
+    setSaveState('unsaved')
+    saveFile(fileName, value)
+  }, [saveFile])
   
   const allFiles = flattenFileTree(wsFileTree)
   const trialLimits = useTrialLimits(allFiles.length)
@@ -367,7 +384,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
         <Panel defaultSize={terminalOpen ? 70 : 100} minSize={40}>
           <PanelGroup direction="horizontal">
             <Panel ref={sidebarRef} defaultSize={15} minSize={3} collapsedSize={3} collapsible onCollapse={() => setLeftCollapsed(true)} onExpand={() => setLeftCollapsed(false)}>
-              <Sidebar fileTree={wsFileTree} collaboratorList={presenceCollaborators.length > 0 ? presenceCollaborators : wsCollaborators} collapsed={leftCollapsed} onToggle={() => { const n = !leftCollapsed; setLeftCollapsed(n); if (sidebarRef.current) { if (n) sidebarRef.current.collapse(); else sidebarRef.current.expand() } }} activeFile={activeFile} onFileChange={openFile} onNewFile={() => handleNewFile()} onFileRename={(name) => { setRenameTarget(name); setRenameValue(name); setRenameOpen(true) }} onFileDelete={(name) => { setDeleteTarget(name); setDeleteOpen(true) }} modifiedFiles={modifiedFiles} />
+              <Sidebar fileTree={wsFileTree} collaboratorList={presenceCollaborators.length > 0 ? presenceCollaborators : wsCollaborators} collapsed={leftCollapsed} onToggle={() => { const n = !leftCollapsed; setLeftCollapsed(n); if (sidebarRef.current) { if (n) sidebarRef.current.collapse(); else sidebarRef.current.expand() } }} activeFile={activeFile} onFileChange={openFile} onNewFile={() => handleNewFile()} onFileRename={(name) => { setRenameTarget(name); setRenameValue(name); setRenameOpen(true) }} onFileDelete={(name) => { setDeleteTarget(name); setDeleteOpen(true) }} modifiedFiles={modifiedFiles} filePresenceMap={filePresenceMap} />
             </Panel>
             <ResizeHandle />
             <Panel defaultSize={splitMode ? 45 : 65} minSize={20}>
@@ -383,7 +400,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
                   ) : (
                     <>
                       <FindReplace open={findOpen} onClose={() => setFindOpen(false)} onFind={() => {}} onReplace={() => {}} onReplaceAll={() => {}} matchCount={0} currentMatch={0} />
-                      <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPosition} activeFile={activeFile} onFileChange={openFile} fileContents={contents} onCloseFile={() => closeTab(activeFile)} />
+                      <CodeEditor remoteCursors={remoteCursors} onCursorChange={setCursorPosition} activeFile={activeFile} onFileChange={openFile} fileContents={contents} onCloseFile={() => closeTab(activeFile)} onContentChange={handleContentChange} />
                     </>
                   )}
                 </Panel>
@@ -394,7 +411,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
                       {secondFile ? (
                         <>
                           <TabBar tabs={[{ id: secondFile, name: secondFile, type: 'code' }]} activeTab={secondFile} onTabSelect={openFile} onTabClose={() => setSplitMode(false)} onTabReorder={() => {}} />
-                          <CodeEditor remoteCursors={[]} onCursorChange={() => {}} activeFile={secondFile} onFileChange={openFile} fileContents={contents} onCloseFile={() => setSplitMode(false)} />
+                          <CodeEditor remoteCursors={[]} onCursorChange={() => {}} activeFile={secondFile} onFileChange={openFile} fileContents={contents} onCloseFile={() => setSplitMode(false)} onContentChange={handleContentChange} />
                         </>
                       ) : (
                         <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
@@ -553,6 +570,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
             onFileRename={(name) => { setRenameTarget(name); setRenameValue(name); setRenameOpen(true) }}
             onFileDelete={(name) => { setDeleteTarget(name); setDeleteOpen(true) }}
             modifiedFiles={modifiedFiles}
+            filePresenceMap={filePresenceMap}
           />
         </div>
       </MobileBottomSheet>

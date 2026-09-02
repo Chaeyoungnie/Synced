@@ -138,6 +138,29 @@ function FileBadge({ type }: { type: FileNode["type"] }) {
   }
 }
 
+function PresenceDot({ users, fileName }: { users: { name: string; initials: string; color: string }[]; fileName: string }) {
+  if (users.length === 0) return null
+  return (
+    <div className="ml-auto flex -space-x-1.5">
+      {users.slice(0, 3).map((u, i) => (
+        <div
+          key={i}
+          className="size-4 rounded-full flex items-center justify-center text-[7px] font-bold text-white ring-2 ring-sidebar"
+          style={{ backgroundColor: u.color }}
+          title={u.name}
+        >
+          {u.initials}
+        </div>
+      ))}
+      {users.length > 3 && (
+        <div className="size-4 rounded-full flex items-center justify-center text-[7px] font-bold text-white bg-muted ring-2 ring-sidebar">
+          +{users.length - 3}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function FolderItem({
   folder,
   depth,
@@ -147,6 +170,7 @@ function FolderItem({
   onFileDelete,
   onToggleFolder,
   modifiedFiles,
+  filePresenceMap,
 }: {
   folder: FolderNode
   depth: number
@@ -158,6 +182,7 @@ function FolderItem({
   modifiedFiles?: Set<string>
   fileTree?: FolderNode
   collaboratorList?: { name: string; initials: string; color: string; role: string; status: string }[]
+  filePresenceMap?: Record<string, { name: string; initials: string; color: string }[]>
 }) {
   return (
     <div>
@@ -182,18 +207,18 @@ function FolderItem({
         <div>
           {folder.children.map((child) => {
             if ('children' in child) {
-              return (
-                <FolderItem
-                  key={child.name}
-                  folder={child}
-                  depth={depth + 1}
-                  activeFile={activeFile}
-                  onFileChange={onFileChange}
-                  onFileRename={onFileRename}
-                  onFileDelete={onFileDelete}
-                  onToggleFolder={onToggleFolder}
-                  modifiedFiles={modifiedFiles}
-                />
+              return (              <FolderItem
+                        key={child.name}
+                        folder={child}
+                        depth={depth + 1}
+                        activeFile={activeFile}
+                        onFileChange={onFileChange}
+                        onFileRename={onFileRename}
+                        onFileDelete={onFileDelete}
+                        onToggleFolder={onToggleFolder}
+                        modifiedFiles={modifiedFiles}
+                        filePresenceMap={filePresenceMap}
+                      />
               )
             }
             return (
@@ -224,6 +249,7 @@ function FolderItem({
                 >
                   <FileBadge type={child.type} />
                   <span className="truncate">{child.name}</span>
+                  <PresenceDot users={filePresenceMap?.[child.name] || []} fileName={child.name} />
                   {modifiedFiles?.has(child.name) && (
                     <span className="ml-auto size-1.5 shrink-0 rounded-full bg-orange-400" title="Unsaved changes" />
                   )}
@@ -251,6 +277,7 @@ export function Sidebar({
   modifiedFiles,
   fileTree,
   collaboratorList,
+  filePresenceMap,
 }: {
   collapsed: boolean
   onToggle: () => void
@@ -264,6 +291,7 @@ export function Sidebar({
   modifiedFiles?: Set<string>
   fileTree?: FolderNode
   collaboratorList?: { name: string; initials: string; color: string; role: string; status: string }[]
+  filePresenceMap?: Record<string, { name: string; initials: string; color: string }[]>
 }) {
   const activeCollaborators = collaboratorList || defaultCollaborators
 
@@ -445,21 +473,22 @@ export function Sidebar({
                     onDelete={onFileDelete}
                     onCopyPath={(name) => navigator.clipboard?.writeText(name)}
                   >
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      className={cn(
-                        'flex w-full cursor-pointer items-center gap-2 rounded-md py-1.5 text-left text-[13px] transition-colors',
-                        activeFile === child.name
-                          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                          : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground',
-                      )}
-                      style={{ paddingLeft: '24px', paddingRight: '12px' }}
-                      onClick={() => onFileChange(child.name)}
-                    >
-                      <FileBadge type={child.type} />
-                      <span className="truncate">{child.name}</span>
-                    </div>
+                <div
+                  role="button"
+                  tabIndex={0}
+                  className={cn(
+                    'flex w-full cursor-pointer items-center gap-2 rounded-md py-1.5 text-left text-[13px] transition-colors',
+                    activeFile === child.name
+                      ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                      : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground',
+                  )}
+                  style={{ paddingLeft: '24px', paddingRight: '12px' }}
+                  onClick={() => onFileChange(child.name)}
+                >
+                  <FileBadge type={child.type} />
+                  <span className="truncate">{child.name}</span>
+                  <PresenceDot users={filePresenceMap?.[child.name] || []} fileName={child.name} />
+                </div>
                   </FileContextMenu>
                 )
               })

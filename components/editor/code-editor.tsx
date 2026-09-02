@@ -66,6 +66,7 @@ export function CodeEditor({
   onCloseFile,
   onCursorChange,
   remoteCursors = [],
+  onContentChange,
 }: {
   activeFile: string
   onFileChange?: (file: string) => void
@@ -73,6 +74,7 @@ export function CodeEditor({
   onCloseFile?: () => void
   onCursorChange?: (line: number, col: number) => void
   remoteCursors?: RemoteCursor[]
+  onContentChange?: (fileName: string, value: string) => void
 }) {
   const [cursorPos, setCursorPos] = useState({ line: 1, col: 1 })
   const allContents = fileContents ?? defaultContents
@@ -119,7 +121,7 @@ export function CodeEditor({
           value={content}
           filename={activeFile}
           onChange={(value) => {
-            console.log(`${activeFile} updated:`, value.length, 'chars')
+            onContentChange?.(activeFile, value)
           }}
         />
       </div>
