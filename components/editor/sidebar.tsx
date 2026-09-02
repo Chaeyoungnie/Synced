@@ -281,7 +281,7 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        'flex h-full flex-col border-r border-border bg-sidebar overflow-hidden',
+        'flex h-full flex-col border-r border-border bg-sidebar overflow-hidden min-w-0 w-full',
         collapsed && 'items-center',
       )}
     >

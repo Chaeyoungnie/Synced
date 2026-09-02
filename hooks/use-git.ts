@@ -60,10 +60,23 @@ function formatDate(dateStr: string): string {
 }
 
 export function useGit(isDemo: boolean = true) {
-  const [branches, setBranches] = useState<GitBranch[]>(isDemo ? DEMO_BRANCHES : [])
-  const [commits, setCommits] = useState<GitCommit[]>(isDemo ? DEMO_COMMITS : [])
-  const [changes, setChanges] = useState<GitChange[]>(isDemo ? DEMO_CHANGES : [])
+  const [branches, setBranches] = useState<GitBranch[]>([])
+  const [commits, setCommits] = useState<GitCommit[]>([])
+  const [changes, setChanges] = useState<GitChange[]>([])
   const [currentBranch, setCurrentBranch] = useState("main")
+
+  // Load demo data once when in demo mode, clear when switching to real workspace
+  useEffect(() => {
+    if (isDemo) {
+      setBranches(DEMO_BRANCHES)
+      setCommits(DEMO_COMMITS)
+      setChanges(DEMO_CHANGES)
+    } else {
+      setBranches([])
+      setCommits([])
+      setChanges([])
+    }
+  }, [isDemo])
 
   const switchBranch = useCallback((branchName: string) => {
     setBranches(prev => prev.map(b => ({ ...b, isCurrent: b.name === branchName })))

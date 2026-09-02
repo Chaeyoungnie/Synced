@@ -96,7 +96,7 @@ export function CollaborationPanel({
   return (
     <aside
       className={cn(
-        'flex h-full flex-col border-l border-border bg-sidebar overflow-hidden',
+        'flex h-full flex-col border-l border-border bg-sidebar overflow-hidden min-w-0 w-full',
       )}
     >
       <div className="flex h-14 items-center border-b border-border px-3">
