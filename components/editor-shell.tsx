@@ -247,27 +247,9 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
     if (workspace?.name) setTitleValue(workspace.name)
   }, [workspace?.name])
   
-  // Show loading skeleton while workspace loads from Supabase
-  if (wsLoading && workspaceId) {
-    return (
-      <main className="flex h-svh min-h-[600px] flex-col overflow-hidden bg-background text-foreground">
-        <div className="flex h-14 shrink-0 items-center border-b border-border bg-card/50 px-4">
-          <div className="flex items-center gap-3">
-            <div className="size-7 animate-pulse rounded bg-muted" />
-            <div className="h-4 w-32 animate-pulse rounded bg-muted" />
-          </div>
-        </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="flex flex-col items-center gap-3">
-            <div className="size-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-            <span className="text-sm text-muted-foreground">Loading workspace...</span>
-          </div>
-        </div>
-      </main>
-    )
-  }
   const allFiles = flattenFileTree(wsFileTree)
   const trialLimits = useTrialLimits(allFiles.length)
+
   const openFile = useCallback((fileName: string) => { setActiveFile(fileName); setPresenceFile(fileName); setSaveState('unsaved'); const match = dbFiles.find(f => f.name === fileName); setActiveFileId(match?.id || null); setOpenTabs((prev) => { if (prev.some((t) => t.id === fileName)) return prev; return [...prev, { id: fileName, name: fileName, type: getFileType(fileName) }] }); setModifiedFiles((prev) => new Set(prev).add(fileName)) }, [dbFiles])
   const closeTab = useCallback((tabId: string) => { setOpenTabs((prev) => { const next = prev.filter((t) => t.id !== tabId); if (tabId === activeFile && next.length > 0) setActiveFile(next[next.length - 1].id); return next }); setModifiedFiles((prev) => { const next = new Set(prev); next.delete(tabId); return next }) }, [activeFile])
   const handleRename = useCallback(() => { if (!renameValue.trim() || renameValue === renameTarget) { setRenameOpen(false); return }; wsRenameFile(renameTarget, renameValue); setContents((prev) => { const next = { ...prev }; if (next[renameTarget] !== undefined) { next[renameValue] = next[renameTarget]; delete next[renameTarget] } return next }); setOpenTabs((prev) => prev.map((t) => t.id === renameTarget ? { ...t, id: renameValue, name: renameValue } : t)); if (activeFile === renameTarget) setActiveFile(renameValue); if (secondFile === renameTarget) setSecondFile(renameValue); setRenameOpen(false); toast('File renamed', 'success') }, [renameValue, renameTarget, activeFile, secondFile])
@@ -298,6 +280,26 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [leftCollapsed, rightCollapsed, toast])
   const handleCommandAction = useCallback((action: string) => { switch (action) { case 'toggle-sidebar': { const n = !leftCollapsed; setLeftCollapsed(n); if (sidebarRef.current) { if (n) sidebarRef.current.collapse(); else sidebarRef.current.expand() }; break } case 'toggle-panel': { const n = !rightCollapsed; setRightCollapsed(n); if (collabRef.current) { if (n) collabRef.current.collapse(); else collabRef.current.expand() }; break } case 'split-editor': setSplitMode(true); break; case 'new-file': handleNewFile(); break;        case 'save': setSaveState('saving'); if (activeFileId) saveVersion(activeFileId, contents[activeFile] || ''); setTimeout(() => setSaveState('saved'), 800); break; case 'open-file': openFileDialog().then((file) => { if (file) { openFile(file.name); setContents((prev) => ({ ...prev, [file.name]: file.content })) } else { setFileSearchOpen(true) } }); break; case 'keybindings': setKeybindingsOpen(true); break; case 'settings': setSettingsOpen(true); break; case 'ai-assistant': setAiOpen(true); break } }, [leftCollapsed, rightCollapsed, handleNewFile])
+
+  // Show loading skeleton while workspace loads from Supabase
+  if (wsLoading && workspaceId) {
+    return (
+      <main className="flex h-svh min-h-[600px] flex-col overflow-hidden bg-background text-foreground">
+        <div className="flex h-14 shrink-0 items-center border-b border-border bg-card/50 px-4">
+          <div className="flex items-center gap-3">
+            <div className="size-7 animate-pulse rounded bg-muted" />
+            <div className="h-4 w-32 animate-pulse rounded bg-muted" />
+          </div>
+        </div>
+        <div className="flex flex-1 items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="size-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <span className="text-sm text-muted-foreground">Loading workspace...</span>
+          </div>
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="flex h-svh min-h-[600px] flex-col overflow-hidden bg-background text-foreground">
