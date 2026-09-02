@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
+import { logActivity } from "@/lib/supabase/activities"
 import { fileTree as mockFileTree, fileContents as mockFileContents, collaborators as mockCollaborators } from "@/components/editor/data"
 import type { FileNode, FolderNode, GitStatus } from "@/components/editor/data"
 
@@ -76,6 +77,7 @@ export function useWorkspace(workspaceId?: string | null) {
   const saveTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({})
   const filesRef = useRef<WorkspaceFile[]>([])
   const lastSavedRef = useRef<Record<string, string>>({})
+  const lastActivityRef = useRef<Record<string, number>>({})
   filesRef.current = dbFiles
   const [error, setError] = useState<string | null>(null)
   const retryCount = useRef<Record<string, number>>({})
@@ -115,6 +117,12 @@ export function useWorkspace(workspaceId?: string | null) {
     lastSavedRef.current[fileName] = content
     setError(null)
     if (isDemo) return
+    // Log activity at most once per 30 seconds per file
+    const now = Date.now()
+    if (workspaceId && (!lastActivityRef.current[fileName] || now - lastActivityRef.current[fileName] > 30000)) {
+      lastActivityRef.current[fileName] = now
+      logActivity(workspaceId, 'file_edited', { fileName, lineCount: content.split('\n').length })
+    }
     if (saveTimers.current[fileName]) clearTimeout(saveTimers.current[fileName])
     saveTimers.current[fileName] = setTimeout(async () => {
       const file = filesRef.current.find(f => f.name === fileName)
@@ -147,7 +155,10 @@ export function useWorkspace(workspaceId?: string | null) {
       const supabase = createClient()
       const fileType = name.endsWith('.css') ? 'css' : name.endsWith('.json') ? 'json' : 'typescript'
       const { data } = await supabase.from("files").insert({ workspace_id: workspaceId, name, path: "/" + name, content: "", language: fileType, git_status: "new" }).select().single()
-      if (data) { setDbFiles(prev => [...prev, data as unknown as WorkspaceFile]) }
+      if (data) {
+        setDbFiles(prev => [...prev, data as unknown as WorkspaceFile])
+        logActivity(workspaceId, 'file_created', { fileName: name })
+      }
     } catch {}
   }, [isDemo, workspaceId, workspace])
 
@@ -159,8 +170,9 @@ export function useWorkspace(workspaceId?: string | null) {
       const supabase = createClient()
       await supabase.from("files").delete().eq("id", file.id)
       setDbFiles(prev => prev.filter(f => f.id !== file.id))
+      if (workspaceId) logActivity(workspaceId, 'file_deleted', { fileName })
     } catch {}
-  }, [isDemo])
+  }, [isDemo, workspaceId])
 
   const renameFile = useCallback(async (oldName: string, newName: string) => {
     setFileContents(prev => {
@@ -175,8 +187,9 @@ export function useWorkspace(workspaceId?: string | null) {
       const supabase = createClient()
       await supabase.from("files").update({ name: newName, path: "/" + newName }).eq("id", file.id)
       setDbFiles(prev => prev.map(f => f.id === file.id ? { ...f, name: newName, path: "/" + newName } : f))
+      if (workspaceId) logActivity(workspaceId, 'file_renamed', { oldName, newName })
     } catch {}
-  }, [isDemo])
+  }, [isDemo, workspaceId])
 
   const subscribeToChanges = useCallback((id: string) => {
     if (!isSupabaseConfigured()) return

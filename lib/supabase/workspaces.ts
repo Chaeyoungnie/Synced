@@ -1,5 +1,6 @@
 import { createClient } from './client'
 import type { Database } from './types'
+import { logActivity } from './activities'
 
 type Workspace = Database['public']['Tables']['workspaces']['Row']
 type File = Database['public']['Tables']['files']['Row']
@@ -37,6 +38,10 @@ export async function createWorkspace(name: string, description?: string) {
     .insert({ name, description, owner_id: user.id })
     .select()
     .single()
+
+  if (data && !error) {
+    logActivity(data.id, 'workspace_created', { workspaceName: name })
+  }
 
   return { data, error }
 }
