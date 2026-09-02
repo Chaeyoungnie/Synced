@@ -218,7 +218,7 @@ export default function ProfilePage() {
           const { count: fileCount } = await supabase.from('files').select('*', { count: 'exact', head: true }).eq('created_by', user.id)
           
           // Get activities for heatmap
-          const { data: activities } = await supabase.from('activities').select('created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(200)
+          const { data: activities } = await supabase.from('activities').select('created_at, action, details').eq('user_id', user.id).order('created_at', { ascending: false }).limit(200)
           
           // Build heatmap from activities
           const heatmap = buildHeatmap(activities || [])
@@ -231,12 +231,27 @@ export default function ProfilePage() {
           const today = new Date().toDateString()
           const todayActivities = (activities || []).filter(a => new Date(a.created_at).toDateString() === today)
           
+          // Calculate actual lines from activity details (lineCount stored per edit)
+          let todayLines = 0
+          let todayEdits = 0
+          for (const a of todayActivities) {
+            if (a.action === 'file_edited') {
+              todayEdits++
+              const details = a.details as Record<string, unknown> | null
+              if (details && typeof details.lineCount === 'number') {
+                todayLines = details.lineCount // Use latest file's line count
+              }
+            } else if (a.action === 'file_created') {
+              todayEdits++
+            }
+          }
+          
           setStats({
             workspaces: wsCount || 0,
             files: fileCount || 0,
             streak,
-            todayFiles: todayActivities.length,
-            todayLines: todayActivities.length * 12, // approximate
+            todayFiles: todayEdits,
+            todayLines,
           })
         }
         loadStats()
