@@ -28,7 +28,7 @@ import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { useUser } from '@/hooks/use-user'
-import { isSupabaseConfigured } from '@/lib/supabase/client'
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/client'
 
 interface Profile {
   fullName: string
@@ -56,19 +56,67 @@ const AVATAR_COLORS = [
   '#06b6d4', '#3b82f6', '#6b7280', '#1e293b',
 ]
 
-// Generate mock activity data (last 12 weeks)
+// Build heatmap from real activity data
+function buildHeatmap(activities: { created_at: string }[]): number[][] {
+  const now = new Date()
+  const weeks: number[][] = []
+  
+  // Count activities per day for last 12 weeks (84 days)
+  const dayCounts: Record<string, number> = {}
+  for (const a of activities) {
+    const day = new Date(a.created_at).toDateString()
+    dayCounts[day] = (dayCounts[day] || 0) + 1
+  }
+  
+  // Build 12 weeks x 7 days grid
+  for (let w = 11; w >= 0; w--) {
+    const week: number[] = []
+    for (let d = 0; d < 7; d++) {
+      const date = new Date(now)
+      date.setDate(date.getDate() - (w * 7 + (6 - d)))
+      const dayStr = date.toDateString()
+      const count = dayCounts[dayStr] || 0
+      // Map count to level 0-4
+      if (count === 0) week.push(0)
+      else if (count <= 2) week.push(1)
+      else if (count <= 5) week.push(2)
+      else if (count <= 10) week.push(3)
+      else week.push(4)
+    }
+    weeks.push(week)
+  }
+  return weeks
+}
+
+// Calculate consecutive day streak
+function calculateStreak(activities: { created_at: string }[]): number {
+  if (!activities.length) return 0
+  const days = new Set(activities.map(a => new Date(a.created_at).toDateString()))
+  let streak = 0
+  const today = new Date()
+  for (let i = 0; i < 365; i++) {
+    const date = new Date(today)
+    date.setDate(date.getDate() - i)
+    if (days.has(date.toDateString())) {
+      streak++
+    } else if (i > 0) {
+      break
+    }
+  }
+  return streak
+}
+
+// Generate mock activity for offline mode
 function generateActivity(): number[][] {
   const weeks: number[][] = []
   for (let w = 0; w < 12; w++) {
     const week: number[] = []
     for (let d = 0; d < 7; d++) {
-      // Random activity 0-4 with some patterns
       const rand = Math.random()
-      if (rand < 0.3) week.push(0)
-      else if (rand < 0.6) week.push(1)
-      else if (rand < 0.85) week.push(2)
-      else if (rand < 0.95) week.push(3)
-      else week.push(4)
+      if (rand < 0.4) week.push(0)
+      else if (rand < 0.7) week.push(1)
+      else if (rand < 0.9) week.push(2)
+      else week.push(3)
     }
     weeks.push(week)
   }
@@ -122,18 +170,17 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE)
   const [editing, setEditing] = useState<string | null>(null)
   const [editValue, setEditValue] = useState('')
-  const [activity] = useState(generateActivity)
+  const [activity, setActivity] = useState<number[][]>([])
   const [saving, setSaving] = useState(false)
-
-  // Stats
   const [stats, setStats] = useState({
     workspaces: 0,
     files: 0,
-    streak: 7,
-    todayFiles: 2,
-    todayLines: 147,
+    streak: 0,
+    todayFiles: 0,
+    todayLines: 0,
   })
 
+  // Load profile from Supabase + localStorage
   useEffect(() => {
     if (user) {
       setProfile(prev => ({
@@ -142,21 +189,63 @@ export default function ProfilePage() {
         joinDate: user.created_at || new Date().toISOString(),
       }))
 
-      // Load stats from localStorage
-      const saved = localStorage.getItem('profile-stats')
+      // Load saved profile from localStorage
+      const saved = localStorage.getItem('profile')
       if (saved) {
-        try { setStats(JSON.parse(saved)) } catch {}
+        try {
+          const parsed = JSON.parse(saved)
+          setProfile(prev => ({ ...prev, ...parsed, fullName: user.user_metadata?.full_name || parsed.fullName }))
+        } catch {}
+      }
+
+      // Fetch real stats from Supabase
+      if (isSupabaseConfigured()) {
+        const supabase = createClient()
+        const loadStats = async () => {
+          const { count: wsCount } = await supabase.from('workspaces').select('*', { count: 'exact', head: true }).eq('owner_id', user.id)
+          const { count: fileCount } = await supabase.from('files').select('*', { count: 'exact', head: true }).eq('created_by', user.id)
+          
+          // Get activities for heatmap
+          const { data: activities } = await supabase.from('activities').select('created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(200)
+          
+          // Build heatmap from activities
+          const heatmap = buildHeatmap(activities || [])
+          setActivity(heatmap)
+          
+          // Calculate streak
+          const streak = calculateStreak(activities || [])
+          
+          // Today's stats
+          const today = new Date().toDateString()
+          const todayActivities = (activities || []).filter(a => new Date(a.created_at).toDateString() === today)
+          
+          setStats({
+            workspaces: wsCount || 0,
+            files: fileCount || 0,
+            streak,
+            todayFiles: todayActivities.length,
+            todayLines: todayActivities.length * 12, // approximate
+          })
+        }
+        loadStats()
+      } else {
+        // Offline mode: load from localStorage
+        const savedStats = localStorage.getItem('profile-stats')
+        if (savedStats) {
+          try { setStats(JSON.parse(savedStats)) } catch {}
+        }
+        setActivity(generateActivity())
       }
     }
   }, [user])
 
   const handleSave = async (field: string, value: string) => {
-    setProfile(prev => ({ ...prev, [field]: value }))
+    const updated = { ...profile, [field]: value }
+    setProfile(updated)
     setEditing(null)
     setSaving(true)
-    // Simulate save
-    await new Promise(r => setTimeout(r, 300))
-    localStorage.setItem('profile', JSON.stringify({ ...profile, [field]: value }))
+    localStorage.setItem('profile', JSON.stringify(updated))
+    await new Promise(r => setTimeout(r, 200))
     setSaving(false)
   }
 

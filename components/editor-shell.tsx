@@ -347,6 +347,11 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
           <Button variant="ghost" size="sm" className="gap-1.5 text-xs" onClick={() => setInviteOpen(true)}><UserPlus className="size-3.5" /> Invite</Button>
           <DeployButton workspaceName={workspace?.name} />
           <Button variant="ghost" size="sm" className="gap-1.5 text-xs" onClick={() => toast("Share link copied!", "success")}><Share2 className="size-3.5" /> Share</Button>
+          <Link href="/profile">
+            <Button variant="ghost" size="icon-sm" className="rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+              {user?.user_metadata?.full_name?.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || 'U'}
+            </Button>
+          </Link>
           {!isDemo && workspaceId && (
             <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-destructive hover:text-destructive" onClick={() => setDeleteWsOpen(true)}><Trash2 className="size-3.5" /></Button>
           )}
