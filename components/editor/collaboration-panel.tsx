@@ -96,53 +96,10 @@ export function CollaborationPanel({
   return (
     <aside
       className={cn(
-        'flex h-full flex-col border-l border-border bg-sidebar overflow-hidden min-w-0 w-full',
+        'flex h-full flex-col bg-sidebar overflow-hidden min-w-0 w-full',
       )}
     >
-      {open ? (
-        <div className="flex h-14 items-center border-b border-border px-3">
-          <PanelRight className="size-4 text-primary" />
-          <span className="ml-2 text-sm font-semibold">Collaboration</span>
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={onToggle}
-                  className="ml-auto text-muted-foreground"
-                />
-              }
-              aria-label="Collapse collaboration panel"
-            >
-              <ChevronRight className="size-4" />
-            </TooltipTrigger>
-            <TooltipContent>Collapse panel</TooltipContent>
-          </Tooltip>
-        </div>
-      ) : (
-        <div className="flex h-14 items-center justify-center border-b border-border">
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={onToggle}
-                  className="text-muted-foreground"
-                />
-              }
-              aria-label="Expand collaboration panel"
-            >
-              <ChevronLeft className="size-4" />
-            </TooltipTrigger>
-            <TooltipContent side="left">Expand panel</TooltipContent>
-          </Tooltip>
-        </div>
-      )}
-
-      {open && (
-        <div className="flex min-h-0 flex-1 flex-col p-4">
+      <div className="flex min-h-0 flex-1 flex-col p-4">
           {/* People section */}
           <CollapsibleSection title="People" count={activeCollaborators.length} badge={`${onlineCount} online`}>
             <div className="flex flex-col gap-3 pb-2">
@@ -266,7 +223,6 @@ export function CollaborationPanel({
             </div>
           </div>
         </div>
-      )}
     </aside>
   )
 }

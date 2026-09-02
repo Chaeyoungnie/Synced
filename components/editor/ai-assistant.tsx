@@ -270,27 +270,7 @@ export function AIAssistant({ open, onToggle, activeFile, fileContent, onApplyCo
   if (!open) return null
 
   return (
-    <div className="flex h-full flex-col bg-card border-l border-border">
-      {/* Header */}
-      <div className="flex h-12 shrink-0 items-center gap-2 border-b border-border px-3">
-        <div className="flex size-6 items-center justify-center rounded-md bg-gradient-to-br from-violet-500 to-blue-500">
-          <Sparkles className="size-3 text-white" />
-        </div>
-        <span className="text-sm font-semibold">AI Assistant</span>
-        <Badge variant="secondary" className="ml-1 h-4 px-1.5 text-[9px] font-mono">Beta</Badge>
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <Button variant="ghost" size="icon-xs" className="ml-auto text-muted-foreground" />
-            }
-            onClick={onToggle}
-          >
-            <X className="size-3.5" />
-          </TooltipTrigger>
-          <TooltipContent>Close AI assistant</TooltipContent>
-        </Tooltip>
-      </div>
-
+    <div className="flex h-full flex-col bg-sidebar">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-4">
         {messages.map((msg) => (

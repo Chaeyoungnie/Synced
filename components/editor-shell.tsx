@@ -226,6 +226,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
   const [keybindingsOpen, setKeybindingsOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [aiOpen, setAiOpen] = useState(false)
+  const [rightTab, setRightTab] = useState<'collab' | 'ai'>('collab')
 
   const [activeFileId, setActiveFileId] = useState<string | null>(null)
   const { versions: fileVersions, loading: versionsLoading, restoreVersion, saveVersion } = useFileVersions(activeFileId, activeFile)
@@ -323,9 +324,9 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
           <Separator orientation="vertical" className="mx-1 h-4" />
           <Button variant="ghost" size="icon-sm" onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}>{resolvedTheme === "dark" ? <Sun className="size-3.5" /> : <Moon className="size-3.5" />}</Button>
           <Separator orientation="vertical" className="mx-1 h-4" />
-          <Button variant="ghost" size="icon-sm" onClick={() => setAiOpen(!aiOpen)}><Bot className="size-3.5" /></Button>
+          <Button variant="ghost" size="icon-sm" onClick={() => { setRightTab('ai'); if (rightCollapsed) { setRightCollapsed(false); collabRef.current?.expand() } }}><Bot className="size-3.5" /></Button>
           <Separator orientation="vertical" className="mx-1 h-4" />
-          <Button variant="ghost" size="icon-sm" onClick={() => { const n = !rightCollapsed; setRightCollapsed(n); if (collabRef.current) { if (n) collabRef.current.collapse(); else collabRef.current.expand() } }}><Users className="size-3.5" /></Button>
+          <Button variant="ghost" size="icon-sm" onClick={() => { setRightTab('collab'); const n = !rightCollapsed; setRightCollapsed(n); if (collabRef.current) { if (n) collabRef.current.collapse(); else collabRef.current.expand() } }}><Users className="size-3.5" /></Button>
           <Separator orientation="vertical" className="mx-1 h-4" />
           <Button variant="ghost" size="icon-sm" onClick={() => setTerminalOpen(!terminalOpen)}><Terminal className="size-3.5" /></Button>
           <Separator orientation="vertical" className="mx-1 h-4" />
@@ -397,7 +398,54 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
             </Panel>
             <ResizeHandle />
             <Panel ref={collabRef} defaultSize={20} minSize={3} collapsedSize={3} collapsible onCollapse={() => setRightCollapsed(true)} onExpand={() => setRightCollapsed(false)}>
-              <CollaborationPanel collaboratorList={presenceCollaborators.length > 0 ? presenceCollaborators : wsCollaborators} open={!rightCollapsed} onToggle={() => { const n = !rightCollapsed; setRightCollapsed(n); if (collabRef.current) { if (n) collabRef.current.collapse(); else collabRef.current.expand() } }} workspaceId={workspaceId} userName={user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'You'} />
+              {!rightCollapsed && (
+                <div className="flex h-full flex-col border-l border-border bg-sidebar">
+                  {/* Tabs */}
+                  <div className="flex h-10 items-center border-b border-border">
+                    <button
+                      onClick={() => setRightTab('collab')}
+                      className={cn(
+                        'flex-1 flex items-center justify-center gap-1.5 h-full text-[11px] font-medium transition-colors border-b-2',
+                        rightTab === 'collab' ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'
+                      )}
+                    >
+                      <Users className="size-3.5" /> Team
+                    </button>
+                    <button
+                      onClick={() => setRightTab('ai')}
+                      className={cn(
+                        'flex-1 flex items-center justify-center gap-1.5 h-full text-[11px] font-medium transition-colors border-b-2',
+                        rightTab === 'ai' ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'
+                      )}
+                    >
+                      <Bot className="size-3.5" /> AI
+                    </button>
+                    <Button variant="ghost" size="icon-sm" onClick={() => { setRightCollapsed(true); collabRef.current?.collapse() }} className="text-muted-foreground">
+                      <ChevronRight className="size-3.5" />
+                    </Button>
+                  </div>
+                  {/* Content */}
+                  <div className="flex-1 overflow-hidden">
+                    {rightTab === 'collab' ? (
+                      <CollaborationPanel
+                        collaboratorList={presenceCollaborators.length > 0 ? presenceCollaborators : wsCollaborators}
+                        open={true}
+                        onToggle={() => { setRightCollapsed(true); collabRef.current?.collapse() }}
+                        workspaceId={workspaceId}
+                        userName={user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'You'}
+                      />
+                    ) : (
+                      <AIAssistant
+                        open={true}
+                        onToggle={() => setRightTab('collab')}
+                        activeFile={activeFile}
+                        fileContent={contents[activeFile] || ''}
+                        onApplyCode={(code: string) => { setContents((prev) => ({ ...prev, [activeFile]: code })) }}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
             </Panel>
           </PanelGroup>
         </Panel>
@@ -419,7 +467,6 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
       <FileSearch open={fileSearchOpen} onOpenChange={setFileSearchOpen} files={flattenFileTree(wsFileTree)} onSelect={(f) => { openFile(f); setFileSearchOpen(false) }} />
       <KeybindingsModal open={keybindingsOpen} onOpenChange={setKeybindingsOpen} mod={mod} />
       <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
-      <AIAssistant open={aiOpen} onToggle={() => setAiOpen(!aiOpen)} activeFile={activeFile} fileContent={contents[activeFile] || ""} onApplyCode={(code: string) => { setContents((prev) => ({ ...prev, [activeFile]: code })) }} />
 
       {gitOpen && (
         <div className="absolute right-0 top-14 bottom-0 z-30 w-80">
