@@ -424,64 +424,54 @@ export function Sidebar({
             <div className="flex items-center gap-2 px-2 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               <ChevronDown className="size-3" /> Files
             </div>
-            <FolderItem
-              folder={{
-                name: 'collaborative-editor',
-                open: folderState['collaborative-editor'],
-                children: [
-                  { name: 'page.tsx', type: 'code', status: 'committed' },
-                  { name: 'editor-shell.tsx', type: 'code', status: 'modified' },
-                  { name: 'globals.css', type: 'css', status: 'committed' },
-                  { name: 'layout.tsx', type: 'code', status: 'committed' },
-                  { name: 'components.json', type: 'json', status: 'committed' },
-                  {
-                    name: 'components',
-                    open: folderState['components'],
-                    children: [
-                      {
-                        name: 'editor',
-                        open: folderState['editor'],
-                        children: [
-                          { name: 'sidebar.tsx', type: 'code', status: 'modified' },
-                          { name: 'tab-bar.tsx', type: 'code', status: 'new' },
-                          { name: 'code-editor.tsx', type: 'code', status: 'committed' },
-                          { name: 'code-mirror-editor.tsx', type: 'code', status: 'committed' },
-                          { name: 'live-preview.tsx', type: 'code', status: 'committed' },
-                          { name: 'collaboration-panel.tsx', type: 'code', status: 'committed' },
-                          { name: 'presence-avatar.tsx', type: 'code', status: 'committed' },
-                          { name: 'breadcrumbs.tsx', type: 'code', status: 'new' },
-                          { name: 'file-context-menu.tsx', type: 'code', status: 'new' },
-                          { name: 'data.ts', type: 'code', status: 'committed' },
-                        ],
-                      },
-                      { name: 'landing-page.tsx', type: 'code', status: 'committed' },
-                      {
-                        name: 'ui',
-                        open: folderState['ui'],
-                        children: [
-                          { name: 'button.tsx', type: 'code', status: 'committed' },
-                          { name: 'input.tsx', type: 'code', status: 'committed' },
-                          { name: 'dialog.tsx', type: 'code', status: 'committed' },
-                          { name: 'badge.tsx', type: 'code', status: 'committed' },
-                          { name: 'tabs.tsx', type: 'code', status: 'committed' },
-                          { name: 'tooltip.tsx', type: 'code', status: 'committed' },
-                          { name: 'separator.tsx', type: 'code', status: 'committed' },
-                          { name: 'avatar.tsx', type: 'code', status: 'committed' },
-                          { name: 'dropdown-menu.tsx', type: 'code', status: 'committed' },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              }}
-              depth={0}
-              activeFile={activeFile}
-              onFileChange={onFileChange}
-              onFileRename={onFileRename}
-              onFileDelete={onFileDelete}
-              onToggleFolder={toggleFolder}
-              modifiedFiles={modifiedFiles}
-            />
+            {fileTree && fileTree.children.length > 0 ? (
+              fileTree.children.map((child) => {
+                if ('children' in child) {
+                  return (
+                    <FolderItem
+                      key={child.name}
+                      folder={child}
+                      depth={0}
+                      activeFile={activeFile}
+                      onFileChange={onFileChange}
+                      onFileRename={onFileRename}
+                      onFileDelete={onFileDelete}
+                      onToggleFolder={toggleFolder}
+                      modifiedFiles={modifiedFiles}
+                    />
+                  )
+                }
+                return (
+                  <FileContextMenu
+                    key={child.name}
+                    fileName={child.name}
+                    onRename={onFileRename}
+                    onDelete={onFileDelete}
+                    onCopyPath={(name) => navigator.clipboard?.writeText(name)}
+                  >
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      className={cn(
+                        'flex w-full cursor-pointer items-center gap-2 rounded-md py-1.5 text-left text-[13px] transition-colors',
+                        activeFile === child.name
+                          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                          : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground',
+                      )}
+                      style={{ paddingLeft: '24px', paddingRight: '12px' }}
+                      onClick={() => onFileChange(child.name)}
+                    >
+                      <FileBadge type={child.type} />
+                      <span className="truncate">{child.name}</span>
+                    </div>
+                  </FileContextMenu>
+                )
+              })
+            ) : (
+              <div className="px-2 py-4 text-center text-xs text-muted-foreground">
+                No files yet
+              </div>
+            )}
           </div>
 
           {/* Git status legend */}
