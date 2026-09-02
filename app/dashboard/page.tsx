@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Plus, Folder, Users, Clock, MoreHorizontal, Trash2, Settings2, ArrowLeft, Search, Sparkles, Globe, Lock } from 'lucide-react'
@@ -29,7 +29,7 @@ const MOCK: Workspace[] = [
 const LC: Record<string, string> = { TypeScript: '#3178c6', Python: '#3572a5', Go: '#00add8' }
 
 export default function DashboardPage() {
-  const { user, signOut } = useUser()
+  const { user, loading: userLoading, signOut } = useUser()
   const router = useRouter()
   const [ws, setWs] = useState<Workspace[]>(MOCK)
   const [createOpen, setCreateOpen] = useState(false)
@@ -38,40 +38,53 @@ export default function DashboardPage() {
   const [sq, setSq] = useState('')
   const [creating, setCreating] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [authWs, setAuthWs] = useState<Workspace[]>([])
+  const loadedRef = useRef(false)
 
-  const loadWorkspaces = useCallback(async () => {
-    if (!user || !isSupabaseConfigured()) { setLoading(false); return }
-    try {
-      // Fetch workspaces
-      const { data: workspaces, error: wsError } = await getWorkspaces()
-      if (wsError || !workspaces) { setLoading(false); return }
-      
-      // Map workspaces
-      const mapped: Workspace[] = workspaces.map((w: any) => ({
-        id: w.id, 
-        name: w.name, 
-        description: w.description || '',
-        fileCount: 0,
-        collaboratorCount: 1,
-        lastModified: w.updated_at ? new Date(w.updated_at).toLocaleDateString() : 'Never',
-        isPublic: w.is_public || false,
-        language: 'TypeScript',
-        color: '#6366f1',
-      }))
+  useEffect(() => {
+    // Skip if still loading user or already loaded
+    if (userLoading || loadedRef.current) return
 
-      setAuthWs(mapped)
-    } catch (e) {
-      console.error('Error loading workspaces:', e)
+    const loadWorkspaces = async () => {
+      if (!user || !isSupabaseConfigured()) {
+        setLoading(false)
+        return
+      }
+
+      try {
+        const { data: workspaces, error: wsError } = await getWorkspaces()
+        if (wsError || !workspaces) {
+          setLoading(false)
+          return
+        }
+
+        const mapped: Workspace[] = workspaces.map((w: any) => ({
+          id: w.id,
+          name: w.name,
+          description: w.description || '',
+          fileCount: 0,
+          collaboratorCount: 1,
+          lastModified: w.updated_at ? new Date(w.updated_at).toLocaleDateString() : 'Never',
+          isPublic: w.is_public || false,
+          language: 'TypeScript',
+          color: '#6366f1',
+        }))
+
+        setAuthWs(mapped)
+      } catch (e) {
+        console.error('Error loading workspaces:', e)
+      }
+      setLoading(false)
     }
-    setLoading(false)
-  }, [user])
 
-  useEffect(() => { loadWorkspaces() }, [loadWorkspaces])
+    loadedRef.current = true
+    loadWorkspaces()
+  }, [user, userLoading])
+
+  const [authWs, setAuthWs] = useState<Workspace[]>([])
 
   const allWs = user ? (authWs.length > 0 ? authWs : MOCK) : MOCK
   const filtered = allWs.filter(w => w.name.toLowerCase().includes(sq.toLowerCase()) || w.description.toLowerCase().includes(sq.toLowerCase()))
-  
+
   const handleCreate = async () => {
     if (!newName.trim()) return
     setCreating(true)
@@ -88,8 +101,17 @@ export default function DashboardPage() {
     }
     setNewName(''); setNewDesc(''); setCreateOpen(false); setCreating(false)
   }
+
   const dn = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Developer'
   const init = dn.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase()
+
+  if (userLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-muted-foreground">Loading...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -121,7 +143,7 @@ export default function DashboardPage() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Workspaces</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {ws.length} workspace{ws.length !== 1 ? 's' : ''} · {user ? 'Signed in as ' + dn : 'Demo mode'}
+              {allWs.length} workspace{allWs.length !== 1 ? 's' : ''} · {user ? 'Signed in as ' + dn : 'Demo mode'}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -191,7 +213,9 @@ export default function DashboardPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCreateOpen(false)}>Cancel</Button>
-            <Button onClick={handleCreate} disabled={!newName.trim()}>Create</Button>
+            <Button onClick={handleCreate} disabled={!newName.trim() || creating}>
+              {creating ? 'Creating...' : 'Create'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
