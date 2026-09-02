@@ -46,6 +46,8 @@ export function usePresence(workspaceId?: string | null) {
   const channelRef = useRef<any>(null)
   const activeFileRef = useRef<string | null>(null)
   const cursorRef = useRef<{ line: number; col: number } | null>(null)
+  // Unique key per tab so same user in multiple tabs shows as separate connections
+  const tabIdRef = useRef(Math.random().toString(36).slice(2))
 
   // Track current user's active file and cursor
   const setActiveFile = useCallback((fileName: string | null) => {
@@ -81,10 +83,13 @@ export function usePresence(workspaceId?: string | null) {
     const supabase = createClient()
     const channelName = `presence:workspace:${workspaceId}`
 
+    // Use a unique key per tab so multiple tabs of the same user appear as separate connections
+    const presenceKey = `${user.id}:${tabIdRef.current}`
+
     const channel = supabase.channel(channelName, {
       config: {
         presence: {
-          key: user.id,
+          key: presenceKey,
         },
       },
     })
@@ -115,14 +120,13 @@ export function usePresence(workspaceId?: string | null) {
         }
 
         // Always include current user
-        const currentUserId = user.id
-        const hasCurrentUser = users.some(u => u.id === currentUserId)
+        const hasCurrentUser = users.some(u => u.id === user.id)
         if (!hasCurrentUser) {
           users.unshift({
-            id: currentUserId,
+            id: user.id,
             name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'You',
             initials: getInitials(user.user_metadata?.full_name || 'You'),
-            color: getColorForUser(currentUserId),
+            color: getColorForUser(user.id),
             role: 'Editor',
             status: 'Online',
             activeFile: activeFileRef.current,
