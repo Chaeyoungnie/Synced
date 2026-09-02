@@ -145,7 +145,8 @@ export function useWorkspace(workspaceId?: string | null) {
     if (isDemo || !workspaceId || !workspace) return
     try {
       const supabase = createClient()
-      const { data } = await supabase.from("files").insert({ workspace_id: workspaceId, name, path: "/" + name, type: type as any, content: "", git_status: "new" }).select().single()
+      const fileType = name.endsWith('.css') ? 'css' : name.endsWith('.json') ? 'json' : 'typescript'
+      const { data } = await supabase.from("files").insert({ workspace_id: workspaceId, name, path: "/" + name, content: "", language: fileType, git_status: "new" }).select().single()
       if (data) { setDbFiles(prev => [...prev, data as unknown as WorkspaceFile]) }
     } catch {}
   }, [isDemo, workspaceId, workspace])
