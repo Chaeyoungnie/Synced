@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Plus, Folder, Users, Clock, MoreHorizontal, Trash2, Settings2, ArrowLeft, Search, Sparkles, Globe, Lock } from 'lucide-react'
+import { Plus, Folder, Users, Clock, MoreHorizontal, Trash2, Settings2, ArrowLeft, Search, Sparkles, Globe, Lock, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -126,6 +126,7 @@ export default function DashboardPage() {
               <DropdownMenu>
                 <DropdownMenuTrigger render={<Button size="icon" className="rounded-full bg-primary text-[10px] font-bold text-primary-foreground" />}>{init}</DropdownMenuTrigger>
                 <DropdownMenuContent align="end" sideOffset={8}>
+                  <DropdownMenuItem onClick={() => router.push('/profile')}><User className="size-4" /> Profile</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => router.push('/')}><ArrowLeft className="size-4" /> Home</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem variant="destructive" onClick={async () => { await signOut(); router.push('/') }}><Trash2 className="size-4" /> Sign out</DropdownMenuItem>
