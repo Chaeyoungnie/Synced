@@ -56,10 +56,17 @@ const AVATAR_COLORS = [
   '#06b6d4', '#3b82f6', '#6b7280', '#1e293b',
 ]
 
-// Build heatmap from real activity data
-function buildHeatmap(activities: { created_at: string }[]): number[][] {
+export interface HeatmapCell {
+  count: number
+  level: number
+  date: string
+  dateObj: Date
+}
+
+// Build heatmap from real activity data — returns actual counts per day
+function buildHeatmap(activities: { created_at: string }[]): HeatmapCell[][] {
   const now = new Date()
-  const weeks: number[][] = []
+  const weeks: HeatmapCell[][] = []
   
   // Count activities per day for last 12 weeks (84 days)
   const dayCounts: Record<string, number> = {}
@@ -70,18 +77,20 @@ function buildHeatmap(activities: { created_at: string }[]): number[][] {
   
   // Build 12 weeks x 7 days grid
   for (let w = 11; w >= 0; w--) {
-    const week: number[] = []
+    const week: HeatmapCell[] = []
     for (let d = 0; d < 7; d++) {
       const date = new Date(now)
       date.setDate(date.getDate() - (w * 7 + (6 - d)))
       const dayStr = date.toDateString()
       const count = dayCounts[dayStr] || 0
-      // Map count to level 0-4
-      if (count === 0) week.push(0)
-      else if (count <= 2) week.push(1)
-      else if (count <= 5) week.push(2)
-      else if (count <= 10) week.push(3)
-      else week.push(4)
+      // Map count to visual level 0-4
+      let level = 0
+      if (count > 0 && count <= 2) level = 1
+      else if (count <= 5) level = 2
+      else if (count <= 10) level = 3
+      else if (count > 10) level = 4
+      const dateFormatted = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      week.push({ count, level, date: dateFormatted, dateObj: date })
     }
     weeks.push(week)
   }
@@ -107,23 +116,26 @@ function calculateStreak(activities: { created_at: string }[]): number {
 }
 
 // Generate mock activity for offline mode
-function generateActivity(): number[][] {
-  const weeks: number[][] = []
-  for (let w = 0; w < 12; w++) {
-    const week: number[] = []
+function generateActivity(): HeatmapCell[][] {
+  const now = new Date()
+  const weeks: HeatmapCell[][] = []
+  for (let w = 11; w >= 0; w--) {
+    const week: HeatmapCell[] = []
     for (let d = 0; d < 7; d++) {
+      const date = new Date(now)
+      date.setDate(date.getDate() - (w * 7 + (6 - d)))
       const rand = Math.random()
-      if (rand < 0.4) week.push(0)
-      else if (rand < 0.7) week.push(1)
-      else if (rand < 0.9) week.push(2)
-      else week.push(3)
+      const count = rand < 0.4 ? 0 : rand < 0.7 ? 1 : rand < 0.9 ? 3 : 7
+      const level = count === 0 ? 0 : count <= 2 ? 1 : count <= 5 ? 2 : count <= 10 ? 3 : 4
+      const dateFormatted = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      week.push({ count, level, date: dateFormatted, dateObj: date })
     }
     weeks.push(week)
   }
   return weeks
 }
 
-function ActivityHeatmap({ activity }: { activity: number[][] }) {
+function ActivityHeatmap({ activity }: { activity: HeatmapCell[][] }) {
   const levels = [
     'bg-muted/30',
     'bg-emerald-500/20',
@@ -143,11 +155,11 @@ function ActivityHeatmap({ activity }: { activity: number[][] }) {
       <div className="flex gap-1">
         {activity.map((week, w) => (
           <div key={w} className="flex flex-col gap-1">
-            {week.map((level, d) => (
+            {week.map((cell, d) => (
               <div
                 key={d}
-                className={`size-3 rounded-sm ${levels[level]}`}
-                title={`${level} contributions`}
+                className={`size-3 rounded-sm ${levels[cell.level]}`}
+                title={cell.count === 0 ? `No contributions on ${cell.date}` : `${cell.count} contribution${cell.count === 1 ? '' : 's'} on ${cell.date}`}
               />
             ))}
           </div>
@@ -170,7 +182,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE)
   const [editing, setEditing] = useState<string | null>(null)
   const [editValue, setEditValue] = useState('')
-  const [activity, setActivity] = useState<number[][]>([])
+  const [activity, setActivity] = useState<HeatmapCell[][]>([])
   const [saving, setSaving] = useState(false)
   const [stats, setStats] = useState({
     workspaces: 0,
