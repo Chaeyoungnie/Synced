@@ -11,6 +11,7 @@ export default defineConfig({
     css: false,
     include: ['**/*.test.{ts,tsx}'],
     exclude: ['node_modules', '.next', 'dist'],
+    pool: 'threads',
     maxWorkers: 1,
   },
   resolve: {
