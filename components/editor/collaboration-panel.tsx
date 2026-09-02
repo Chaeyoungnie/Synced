@@ -19,7 +19,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { Separator } from '@/components/ui/separator'
 import { PresenceAvatar } from './presence-avatar'
-import { collaborators as defaultCollaborators } from './data'
+
 import { useChat, type ChatMessage } from '@/hooks/use-chat'
 
 
@@ -81,7 +81,7 @@ export function CollaborationPanel({
   workspaceId?: string | null
   userName?: string
 }) {
-  const activeCollaborators = collaboratorList || defaultCollaborators
+  const activeCollaborators = collaboratorList || []
   const [message, setMessage] = useState('')
   const { messages: chatMessages, sendMessage: sendChatMessage } = useChat(workspaceId, userName)
 

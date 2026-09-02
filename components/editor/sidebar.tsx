@@ -25,7 +25,7 @@ import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip
 import { Separator } from '@/components/ui/separator'
 import { PresenceAvatar } from './presence-avatar'
 import { FileContextMenu } from './file-context-menu'
-import { collaborators as defaultCollaborators, type FileNode, type FolderNode, type GitStatus } from './data'
+import { type FileNode, type FolderNode, type GitStatus } from './data'
 
 function GitStatusDot({ status }: { status?: GitStatus }) {
   if (!status || status === 'committed') return null
