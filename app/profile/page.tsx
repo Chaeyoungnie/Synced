@@ -85,9 +85,9 @@ function buildHeatmap(activities: { created_at: string }[]): HeatmapCell[][] {
       const count = dayCounts[dayStr] || 0
       // Map count to visual level 0-4
       let level = 0
-      if (count > 0 && count <= 2) level = 1
-      else if (count <= 5) level = 2
-      else if (count <= 10) level = 3
+      if (count >= 1 && count <= 2) level = 1
+      else if (count >= 3 && count <= 5) level = 2
+      else if (count >= 6 && count <= 10) level = 3
       else if (count > 10) level = 4
       const dateFormatted = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
       week.push({ count, level, date: dateFormatted, dateObj: date })
