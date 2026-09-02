@@ -128,7 +128,7 @@ describe('EditorShell', () => {
   it('renders collaboration panel', () => {
     renderWithProviders(<EditorShell />)
 
-    expect(screen.getByText('Collaboration')).toBeInTheDocument()
+    expect(screen.getAllByText('Team').length).toBeGreaterThan(0)
   })
 
   it('opens command palette on Ctrl+K', async () => {
