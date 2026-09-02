@@ -186,7 +186,10 @@ export default function DashboardPage() {
                 </div>
                 <span className="flex items-center gap-1"><Clock className="size-3" /> {w.lastModified}</span>
               </div>
-              <button onClick={() => router.push('/editor?ws=' + w.id)} className="absolute inset-0 rounded-xl" />
+              <button onClick={() => router.push('/editor?ws=' + w.id)} className="absolute inset-0 rounded-xl z-0" />
+              <div className="absolute inset-0 z-10 pointer-events-none">
+                <div className="absolute right-2 top-2 pointer-events-auto" />
+              </div>
             </div>
           ))}
           <button onClick={() => setCreateOpen(true)} className="flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-border p-5 text-muted-foreground transition-all hover:border-primary/50 hover:text-primary">
