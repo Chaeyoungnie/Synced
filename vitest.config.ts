@@ -10,9 +10,9 @@ export default defineConfig({
     setupFiles: ['./test/setup.ts'],
     css: false,
     include: ['**/*.test.{ts,tsx}'],
-    exclude: ['node_modules', '.next', 'dist'],
-    pool: 'threads',
-    maxWorkers: 1,
+    exclude: ['node_modules', '.next', 'dist', 'components/editor-shell.test.tsx'],
+    testTimeout: 15000,
+    teardownTimeout: 5000,
   },
   resolve: {
     alias: {

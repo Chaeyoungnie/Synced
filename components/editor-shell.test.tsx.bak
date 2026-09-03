@@ -1,0 +1,325 @@
+import { render, screen, fireEvent, act } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import React from 'react'
+import EditorShell from './editor-shell'
+import { ThemeProvider } from '@/hooks/use-theme'
+import { ToastProvider } from '@/components/editor/toast-provider'
+
+// Mock CodeMirror since it needs complex DOM setup
+vi.mock('./code-mirror-editor', () => ({
+  CodeMirrorEditor: ({ value, filename }: { value: string; filename: string }) => (
+    <div data-testid="codemirror" data-filename={filename}>{value}</div>
+  ),
+}))
+
+// Mock react-resizable-panels
+vi.mock('react-resizable-panels', () => {
+  const React = require('react')
+  const Panel = React.forwardRef((props: any, ref: any) => {
+    React.useImperativeHandle(ref, () => ({
+      collapse: vi.fn(),
+      expand: vi.fn(),
+      getSize: vi.fn(() => 20),
+      setCollapsed: vi.fn(),
+      isCollapsed: vi.fn(() => false),
+    }))
+    return <div data-testid="panel" {...props}>{props.children}</div>
+  })
+  return {
+    PanelGroup: ({ children, ...props }: any) => <div data-testid="panel-group" {...props}>{children}</div>,
+    Panel,
+    PanelResizeHandle: ({ ...props }: any) => <div data-testid="resize-handle" {...props} />,
+  }
+})
+
+// Mock lucide-react icons
+vi.mock('lucide-react', async (importOriginal) => {
+  const actual: any = await importOriginal()
+  const mocked: Record<string, any> = {}
+  for (const key of Object.keys(actual)) {
+    if (typeof actual[key] === 'function' || typeof actual[key] === 'object') {
+      mocked[key] = (props: any) => React.createElement('span', { ...props, 'data-testid': `icon-${key.toLowerCase()}` })
+    } else {
+      mocked[key] = actual[key]
+    }
+  }
+  return mocked
+})
+
+// Mock @base-ui/react components that use portals/timers
+vi.mock('@/components/ui/tooltip', () => ({
+  Tooltip: ({ children }: any) => <div data-testid="tooltip">{children}</div>,
+  TooltipTrigger: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+  TooltipContent: ({ children }: any) => <span>{children}</span>,
+  TooltipProvider: ({ children }: any) => <>{children}</>,
+}))
+
+vi.mock('@/components/ui/dialog', () => ({
+  Dialog: ({ children, open }: any) => open ? <div data-testid="dialog">{children}</div> : null,
+  DialogContent: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  DialogHeader: ({ children }: any) => <div>{children}</div>,
+  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
+  DialogDescription: ({ children }: any) => <p>{children}</p>,
+  DialogFooter: ({ children }: any) => <div>{children}</div>,
+}))
+
+vi.mock('@/components/ui/dropdown-menu', () => ({
+  DropdownMenu: ({ children }: any) => <div data-testid="dropdown">{children}</div>,
+  DropdownMenuTrigger: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+  DropdownMenuContent: ({ children }: any) => <div>{children}</div>,
+  DropdownMenuItem: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+  DropdownMenuSeparator: () => <hr />,
+}))
+
+vi.mock('@/components/ui/tabs', () => ({
+  Tabs: ({ children, ...props }: any) => <div data-testid="tabs" {...props}>{children}</div>,
+  TabsList: ({ children }: any) => <div>{children}</div>,
+  TabsTrigger: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+}))
+
+vi.mock('@/components/ui/separator', () => ({
+  Separator: (props: any) => <hr {...props} />,
+}))
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
+  }),
+}))
+
+vi.mock('next/link', () => ({
+  default: ({ children, href, ...props }: any) => <a href={href} {...props}>{children}</a>,
+}))
+
+vi.mock('@/hooks/use-workspace', () => ({
+  useWorkspace: () => ({
+    fileTree: { name: 'root', open: true, children: [] },
+    fileContents: {},
+    collaborators: [],
+    workspace: null,
+    files: [],
+    loading: false,
+    isDemo: false,
+    saveFile: vi.fn(),
+    createFile: vi.fn(),
+    deleteFile: vi.fn(),
+    renameFile: vi.fn(),
+  }),
+}))
+
+vi.mock('@/hooks/use-presence', () => ({
+  usePresence: () => ({
+    onlineUsers: [],
+    isConnected: false,
+    setActiveFile: vi.fn(),
+    setCursorPosition: vi.fn(),
+  }),
+}))
+
+vi.mock('@/lib/supabase/client', () => ({
+  createClient: vi.fn(() => ({})),
+  isSupabaseConfigured: vi.fn(() => false),
+}))
+
+vi.mock('@/hooks/use-user', () => ({
+  useUser: () => ({
+    user: null,
+    loading: false,
+    signOut: vi.fn(),
+  }),
+}))
+
+vi.mock('@/lib/supabase/workspaces', () => ({
+  addCollaborator: vi.fn(),
+  deleteWorkspace: vi.fn(),
+}))
+
+vi.mock('@/hooks/use-file-versions', () => ({
+  useFileVersions: () => ({
+    versions: [],
+    loading: false,
+    saveVersion: vi.fn(),
+    refresh: vi.fn(),
+  }),
+}))
+
+vi.mock('@/hooks/use-git', () => ({
+  useGit: () => ({
+    gitStatus: [],
+    branches: [],
+    currentBranch: 'main',
+    commits: [],
+    loading: false,
+    commit: vi.fn(),
+    push: vi.fn(),
+    pull: vi.fn(),
+  }),
+}))
+
+vi.mock('@/hooks/use-file-ops', () => ({
+  useFileOps: () => ({
+    isDesktop: false,
+    openFileDialog: vi.fn(async () => null),
+    saveFileDialog: vi.fn(async () => null),
+  }),
+}))
+
+vi.mock('@/hooks/use-trial-limits', () => ({
+  useTrialLimits: () => ({
+    filesCreated: 0,
+    maxFiles: 5,
+    canCreateFile: true,
+  }),
+}))
+
+vi.mock('@/lib/features', () => ({
+  features: { collaboration: false, git: false, ai: false },
+}))
+
+// Mock all child components to avoid deep rendering issues
+vi.mock('@/components/editor/sidebar', () => ({
+  Sidebar: (props: any) => (
+    <div data-testid="sidebar" data-collapsed={props.collapsed}>
+      {!props.collapsed && <span>Synced</span>}
+      {!props.collapsed && <span>WORKSPACE</span>}
+    </div>
+  ),
+}))
+
+vi.mock('@/components/editor/code-editor', () => ({
+  CodeEditor: (props: any) => <div data-testid="codemirror-editor" />,
+}))
+
+vi.mock('@/components/editor/collaboration-panel', () => ({
+  CollaborationPanel: (props: any) => (
+    <div data-testid="collab-panel">
+      <span>Team</span>
+    </div>
+  ),
+}))
+
+vi.mock('@/components/editor/ai-assistant', () => ({
+  AIAssistant: () => <div data-testid="ai-assistant">AI</div>,
+}))
+
+vi.mock('@/components/editor/tab-bar', () => ({
+  TabBar: (props: any) => <div data-testid="tab-bar" />,
+}))
+
+vi.mock('@/components/editor/breadcrumbs', () => ({
+  Breadcrumbs: (props: any) => <div data-testid="breadcrumbs" />,
+}))
+
+vi.mock('@/components/editor/live-preview', () => ({
+  LivePreview: () => <div data-testid="live-preview" />,
+}))
+
+vi.mock('@/components/editor/mobile-bottom-sheet', () => ({
+  MobileBottomSheet: (props: any) => null,
+}))
+
+vi.mock('@/components/editor/invite-collaborator-dialog', () => ({
+  InviteCollaboratorDialog: (props: any) => null,
+}))
+
+vi.mock('@/components/editor/notifications', () => ({
+  NotificationBell: () => <span data-testid="notification-bell" />,
+}))
+
+vi.mock('@/components/editor/terminal-panel', () => ({
+  TerminalPanel: () => <div data-testid="terminal" />,
+}))
+
+vi.mock('@/components/editor/git-panel', () => ({
+  GitPanel: () => <div data-testid="git-panel" />,
+}))
+
+vi.mock('@/components/trial-banner', () => ({
+  TrialBanner: () => null,
+}))
+
+vi.mock('@/components/upgrade-dialog', () => ({
+  UpgradeDialog: (props: any) => null,
+}))
+
+vi.mock('@/components/editor/settings-modal', () => ({
+  SettingsModal: (props: any) => null,
+}))
+
+vi.mock('@/components/editor/keybindings-modal', () => ({
+  KeybindingsModal: (props: any) => null,
+}))
+
+vi.mock('@/components/editor/file-search', () => ({
+  FileSearch: (props: any) => null,
+}))
+
+vi.mock('@/components/editor/titlebar', () => ({
+  TitleBar: (props: any) => <div data-testid="titlebar" />,
+}))
+
+vi.mock('@/components/editor/onboarding', () => ({
+  Onboarding: (props: any) => null,
+}))
+
+vi.mock('@/components/editor/empty-state', () => ({
+  EmptyState: () => <div data-testid="empty-state" />,
+}))
+
+vi.mock('@/components/editor/find-replace', () => ({
+  FindReplace: (props: any) => null,
+}))
+
+vi.mock('@/components/editor/deploy-button', () => ({
+  DeployButton: (props: any) => null,
+}))
+
+vi.mock('@/hooks/use-before-unload', () => ({
+    useBeforeUnload: () => {},
+}))
+
+vi.mock('@/components/editor/file-context-menu', () => ({
+  FileContextMenu: ({ children }) => <>{children}</>,
+}))
+
+describe('EditorShell', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    document.documentElement.classList.remove('light', 'dark')
+  })
+
+  function renderWithProviders(ui) {
+    return render(<ThemeProvider><ToastProvider>{ui}</ToastProvider></ThemeProvider>)
+  }
+
+  it('renders the editor shell', () => {
+    renderWithProviders(<EditorShell />)
+    expect(screen.getByText('Synced')).toBeInTheDocument()
+  })
+
+  it('renders sidebar', () => {
+    renderWithProviders(<EditorShell />)
+    expect(screen.getByTestId('sidebar')).toBeInTheDocument()
+  })
+
+  it('renders collaboration panel', () => {
+    renderWithProviders(<EditorShell />)
+    expect(screen.getAllByText('Team').length).toBeGreaterThan(0)
+  })
+
+  it('toggles sidebar on Ctrl+B', async () => {
+    renderWithProviders(<EditorShell />)
+    expect(screen.getByText('Synced')).toBeInTheDocument()
+    await act(async () => {
+      fireEvent.keyDown(document, { key: 'b', ctrlKey: true })
+    })
+    expect(screen.getAllByTestId('panel').length).toBeGreaterThan(0)
+  })
+
+  it('renders with panel group', () => {
+    renderWithProviders(<EditorShell />)
+    expect(screen.getByTestId('panel-group')).toBeInTheDocument()
+  })
+})
