@@ -77,6 +77,7 @@ export function useWorkspace(workspaceId?: string | null) {
   const filesRef = useRef<WorkspaceFile[]>([])
   const lastSavedRef = useRef<Record<string, string>>({})
   const lastActivityRef = useRef<Record<string, number>>({})
+  const broadcastRef = useRef<any>(null)
   filesRef.current = dbFiles
   const [error, setError] = useState<string | null>(null)
   const retryCount = useRef<Record<string, number>>({})
@@ -210,12 +211,9 @@ export function useWorkspace(workspaceId?: string | null) {
       } else {
         if (workspaceId) logActivity(workspaceId, 'file_deleted', { fileName })
         // Broadcast delete to other users
-        const bc = createClient().channel('file-ops:' + workspaceId)
-        bc.subscribe((status) => {
-          if (status === 'SUBSCRIBED') {
-            bc.send({ type: 'broadcast', event: 'file-deleted', payload: { fileId: file.id, fileName } })
-          }
-        })
+        if (broadcastRef.current) {
+          broadcastRef.current.send({ type: 'broadcast', event: 'file-deleted', payload: { fileId: file.id, fileName } })
+        }
       }
     } catch (e) {
       console.error('[Delete] Exception:', e)
@@ -248,12 +246,9 @@ export function useWorkspace(workspaceId?: string | null) {
         })
       } else {
         if (workspaceId) logActivity(workspaceId, 'file_renamed', { oldName, newName })
-        const bc = createClient().channel('file-ops:' + workspaceId)
-        bc.subscribe((status) => {
-          if (status === 'SUBSCRIBED') {
-            bc.send({ type: 'broadcast', event: 'file-renamed', payload: { fileId: file.id, oldName, newName } })
-          }
-        })
+        if (broadcastRef.current) {
+          broadcastRef.current.send({ type: 'broadcast', event: 'file-renamed', payload: { fileId: file.id, oldName, newName } })
+        }
       }
     } catch (e) {
       console.error('[Rename] Exception:', e)
@@ -293,6 +288,7 @@ export function useWorkspace(workspaceId?: string | null) {
 
     // 2. Broadcast channel — handles DELETE and RENAME (postgres DELETE is unreliable)
     const broadcastChannel = supabase.channel('file-ops:' + id)
+    broadcastRef.current = broadcastChannel
     broadcastChannel
       .on('broadcast', { event: 'file-deleted' }, (payload: any) => {
         const { fileId, fileName } = payload.payload
