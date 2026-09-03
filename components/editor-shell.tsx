@@ -293,6 +293,20 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
   const handleNewFile = useCallback(() => { if (!trialLimits.canAddFile) { setUpgradeReason(trialLimits.upgradeReason); setUpgradeDialogOpen(true); return; }; setNewFileName(''); setNewFileOpen(true) }, [trialLimits.canAddFile, trialLimits.upgradeReason])
   const confirmNewFile = useCallback(async () => { const trimmed = newFileName.trim(); if (!trimmed) return; const fileName = trimmed.includes('.') ? trimmed : trimmed + '.tsx'; setContents((prev) => ({ ...prev, [fileName]: '' })); await wsCreateFile(fileName, 'code'); openFile(fileName); setNewFileOpen(false); setNewFileName(''); toast('File created', 'success') }, [newFileName, openFile, toast])
   useBeforeUnload(modifiedFiles.size > 0)
+
+  // Clean up tabs when files are deleted/renamed by another user via Realtime
+  useEffect(() => {
+    const fileNames = new Set(allFiles.map(f => f.name))
+    setOpenTabs(prev => {
+      const remaining = prev.filter(t => fileNames.has(t.id))
+      if (remaining.length < prev.length) {
+        const activeStillExists = remaining.some(t => t.id === activeFile)
+        if (!activeStillExists && remaining.length > 0) setActiveFile(remaining[0].id)
+      }
+      return remaining.length === prev.length ? prev : remaining
+    })
+  }, [allFiles, activeFile])
+
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); setCommandOpen((p) => !p) }

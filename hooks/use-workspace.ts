@@ -264,18 +264,34 @@ export function useWorkspace(workspaceId?: string | null) {
         if (payload.eventType === 'DELETE') {
           const deletedId = payload.old?.id
           if (deletedId) {
-            setDbFiles(prev => prev.filter(f => f.id !== deletedId))
-            setFileContents(prev => { const next = { ...prev }; const deletedName = payload.old?.name; if (deletedName) delete next[deletedName]; return next })
+            // Look up name BEFORE removing from dbFiles
+            setDbFiles(prev => {
+              const file = prev.find(f => f.id === deletedId)
+              if (file) {
+                setFileContents(cc => { const next = { ...cc }; delete next[file.name]; return next })
+              }
+              return prev.filter(f => f.id !== deletedId)
+            })
           }
           return
         }
 
         const updated = payload.new as WorkspaceFile
         if (!updated) return
-        // Update local state with remote change
+
+        // Handle UPDATE (including rename)
         setDbFiles(prev => {
           const exists = prev.find(f => f.id === updated.id)
           if (exists) {
+            // If name changed, clean up old content key
+            if (exists.name !== updated.name) {
+              setFileContents(cc => {
+                const next = { ...cc }
+                next[updated.name] = updated.content || ''
+                delete next[exists.name]
+                return next
+              })
+            }
             return prev.map(f => f.id === updated.id ? updated : f)
           }
           return [...prev, updated]
