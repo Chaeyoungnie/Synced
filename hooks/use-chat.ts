@@ -132,8 +132,12 @@ export function useChat(workspaceId?: string | null, userName?: string) {
       }, async (payload) => {
         if (!mounted) return
         const newMsg = payload.new as DbMessage
-        // Avoid duplicates
+        // Avoid duplicates — check by ID or by matching temp optimistic message
         if (messagesRef.current.some((m) => m.id === newMsg.id)) return
+        // Replace temp optimistic message with the real one (same content, same user)
+        const tempIndex = messagesRef.current.findIndex(
+          (m) => m.id.startsWith('temp-') && m.userId === newMsg.user_id && m.text === newMsg.content
+        )
         // Fetch sender's profile name since realtime payload doesn't include joins
         let senderName = userName
         if (newMsg.user_id) {
@@ -146,7 +150,12 @@ export function useChat(workspaceId?: string | null, userName?: string) {
           if (profile?.full_name) senderName = profile.full_name
         }
         const chatMsg = dbMessageToChat(newMsg, senderName)
-        setMessages((prev) => [chatMsg, ...prev])
+        if (tempIndex >= 0) {
+          // Replace the optimistic message with the real one
+          setMessages((prev) => prev.map((m, i) => i === tempIndex ? chatMsg : m))
+        } else {
+          setMessages((prev) => [chatMsg, ...prev])
+        }
       })
       .subscribe()
     return () => { mounted = false; supabase.removeChannel(channel) }
@@ -181,23 +190,25 @@ export function useChat(workspaceId?: string | null, userName?: string) {
       // Use fallback name
     }
     // Optimistic add
-    const optimisticMsg: ChatMessage = {
-      id: `temp-${Date.now()}`,
-      sender: senderName,
-      initials: senderInitials,
-      text: text.trim(),
-      time: "just now",
-      file: fileRef,
-    }
-    setMessages((prev) => [optimisticMsg, ...prev])
-
-    if (isDemo || !workspaceId || !isSupabaseConfigured()) return
+    let currentUserId: string | undefined
     try {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      await supabase.from("messages").insert({
+      const supabase2 = createClient()
+      const { data: { user: u2 } } = await supabase2.auth.getUser()
+      currentUserId = u2?.id
+      const optimisticMsg: ChatMessage = {
+        id: `temp-${Date.now()}`,
+        sender: senderName,
+        initials: senderInitials,
+        text: text.trim(),
+        time: "just now",
+        file: fileRef,
+        userId: currentUserId,
+      }
+      setMessages((prev) => [optimisticMsg, ...prev])
+      if (isDemo || !workspaceId || !isSupabaseConfigured()) return
+      await supabase2.from("messages").insert({
         workspace_id: workspaceId,
-        user_id: user?.id || null,
+        user_id: u2?.id || null,
         content: text.trim(),
         file_reference: fileRef || null,
       })
