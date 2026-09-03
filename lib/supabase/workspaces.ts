@@ -52,18 +52,35 @@ export async function getWorkspaces() {
   
   if (!user) throw new Error('Not authenticated')
 
-  // Simple query first - just get workspaces owned by the user
+  // Get workspaces where user is owner OR collaborator
   const { data: ownedWorkspaces, error: ownedError } = await supabase
     .from('workspaces')
     .select('*')
     .eq('owner_id', user.id)
     .order('updated_at', { ascending: false })
 
+  // Get workspaces where user is a collaborator
+  const { data: collabWorkspaces } = await supabase
+    .from('collaborators')
+    .select('workspaces(*)')
+    .eq('user_id', user.id)
+
+  // Merge and deduplicate
+  const allWorkspaces = [...(ownedWorkspaces || [])]
+  const ownedIds = new Set(allWorkspaces.map(w => w.id))
+  for (const c of collabWorkspaces || []) {
+    const ws = (c as any).workspaces
+    if (ws && !ownedIds.has(ws.id)) {
+      allWorkspaces.push(ws)
+    }
+  }
+  allWorkspaces.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+
   if (ownedError) {
-    return { data: null, error: ownedError }
+    return { data: collabWorkspaces ? allWorkspaces : null, error: ownedError }
   }
 
-  return { data: ownedWorkspaces || [], error: null }
+  return { data: allWorkspaces, error: null }
 }
 
 export async function getWorkspace(workspaceId: string) {
@@ -197,7 +214,16 @@ export async function addCollaborator(workspaceId: string, email: string, role: 
     
     if (!nameProfile) throw new Error('No user found with that email. They may need to sign up first.')
     
-    // Use the name profile
+    // Check if already a collaborator
+    const { data: existing } = await supabase
+      .from('collaborators')
+      .select('id')
+      .eq('workspace_id', workspaceId)
+      .eq('user_id', nameProfile.id)
+      .single()
+    
+    if (existing) throw new Error('This user is already a collaborator.')
+    
     const { data, error } = await supabase
       .from('collaborators')
       .insert({
@@ -211,6 +237,16 @@ export async function addCollaborator(workspaceId: string, email: string, role: 
     if (error) throw error
     return { data, error }
   }
+
+  // Check if already a collaborator
+  const { data: existing } = await supabase
+    .from('collaborators')
+    .select('id')
+    .eq('workspace_id', workspaceId)
+    .eq('user_id', profile.id)
+    .single()
+
+  if (existing) throw new Error('This user is already a collaborator.')
 
   const { data, error } = await supabase
     .from('collaborators')

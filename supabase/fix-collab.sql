@@ -9,7 +9,9 @@ DROP POLICY IF EXISTS "Users can view own workspaces" ON workspaces;
 DROP POLICY IF EXISTS "Users can create workspaces" ON workspaces;
 DROP POLICY IF EXISTS "Users can update own workspaces" ON workspaces;
 DROP POLICY IF EXISTS "Users can delete own workspaces" ON workspaces;
+DROP POLICY IF EXISTS "Authenticated users can create workspaces" ON workspaces;
 DROP POLICY IF EXISTS "Owner and collaborators can view workspaces" ON workspaces;
+DROP POLICY IF EXISTS "Owner can create workspaces" ON workspaces;
 DROP POLICY IF EXISTS "Owner can update workspaces" ON workspaces;
 DROP POLICY IF EXISTS "Owner can delete workspaces" ON workspaces;
 
@@ -20,6 +22,8 @@ DROP POLICY IF EXISTS "Owner and editors can manage files" ON files;
 
 DROP POLICY IF EXISTS "Users can view collaborators" ON collaborators;
 DROP POLICY IF EXISTS "Users can manage collaborators" ON collaborators;
+DROP POLICY IF EXISTS "Owner can insert collaborators" ON collaborators;
+DROP POLICY IF EXISTS "Owner can manage collaborators" ON collaborators;
 
 DROP POLICY IF EXISTS "Users can view file versions" ON file_versions;
 DROP POLICY IF EXISTS "Users can create file versions" ON file_versions;
@@ -27,7 +31,15 @@ DROP POLICY IF EXISTS "Owner and collaborators can manage file versions" ON file
 
 DROP POLICY IF EXISTS "Owner and collaborators can manage messages" ON messages;
 
--- Workspaces: Owner + collaborators can view
+-- ============================================
+-- WORKSPACES
+-- ============================================
+
+-- Anyone authenticated can create workspaces (they become the owner)
+CREATE POLICY "Authenticated users can create workspaces" ON workspaces
+  FOR INSERT WITH CHECK (auth.uid() = owner_id);
+
+-- Owner + collaborators can view
 CREATE POLICY "Owner and collaborators can view workspaces" ON workspaces
   FOR SELECT USING (
     auth.uid() = owner_id OR
@@ -38,14 +50,18 @@ CREATE POLICY "Owner and collaborators can view workspaces" ON workspaces
     )
   );
 
--- Workspaces: Only owner can update/delete
+-- Only owner can update/delete
 CREATE POLICY "Owner can update workspaces" ON workspaces
   FOR UPDATE USING (auth.uid() = owner_id);
 
 CREATE POLICY "Owner can delete workspaces" ON workspaces
   FOR DELETE USING (auth.uid() = owner_id);
 
--- Files: Owner + collaborators can view
+-- ============================================
+-- FILES
+-- ============================================
+
+-- Owner + collaborators can view
 CREATE POLICY "Owner and collaborators can view files" ON files
   FOR SELECT USING (
     EXISTS (
@@ -62,7 +78,7 @@ CREATE POLICY "Owner and collaborators can view files" ON files
     )
   );
 
--- Files: Owner + editors/admins can insert/update/delete
+-- Owner + editors/admins can insert/update/delete
 CREATE POLICY "Owner and editors can manage files" ON files
   FOR ALL USING (
     EXISTS (
@@ -80,7 +96,34 @@ CREATE POLICY "Owner and editors can manage files" ON files
     )
   );
 
--- File versions: Owner + collaborators can view/manage
+-- ============================================
+-- COLLABORATORS
+-- ============================================
+
+-- Owner can insert collaborators
+CREATE POLICY "Owner can insert collaborators" ON collaborators
+  FOR INSERT WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM workspaces
+      WHERE workspaces.id = workspace_id
+      AND workspaces.owner_id = auth.uid()
+    )
+  );
+
+-- Owner + collaborators can view
+CREATE POLICY "Owner can manage collaborators" ON collaborators
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM workspaces
+      WHERE workspaces.id = workspace_id
+      AND workspaces.owner_id = auth.uid()
+    )
+  );
+
+-- ============================================
+-- FILE VERSIONS
+-- ============================================
+
 CREATE POLICY "Owner and collaborators can manage file versions" ON file_versions
   FOR ALL USING (
     EXISTS (
@@ -98,7 +141,10 @@ CREATE POLICY "Owner and collaborators can manage file versions" ON file_version
     )
   );
 
--- Messages: Owner + collaborators can view/send
+-- ============================================
+-- MESSAGES
+-- ============================================
+
 CREATE POLICY "Owner and collaborators can manage messages" ON messages
   FOR ALL USING (
     EXISTS (
