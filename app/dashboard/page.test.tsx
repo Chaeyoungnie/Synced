@@ -31,7 +31,7 @@ describe('Dashboard Page', () => {
 
   it('renders workspaces heading', () => {
     render(<DashboardPage />)
-    expect(screen.getByText('Workspaces')).toBeDefined()
+    expect(screen.getByText('My Workspaces')).toBeDefined()
   })
 
   it('shows demo mode indicator', () => {
