@@ -20,6 +20,7 @@ interface DbMessage {
   content: string
   file_reference: string | null
   created_at: string
+  profiles?: { full_name: string | null; avatar_url: string | null } | null
 }
 
 function getDemoMessages(): ChatMessage[] {
@@ -44,8 +45,10 @@ function formatTimeAgo(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString()
 }
 
-function dbMessageToChat(msg: DbMessage, userName?: string): ChatMessage {
-  const name = userName || "User"
+function dbMessageToChat(msg: DbMessage, currentUserName?: string): ChatMessage {
+  // Use the sender's profile name if available, otherwise fall back to current user
+  const senderProfile = msg.profiles
+  const name = senderProfile?.full_name || currentUserName || "User"
   const initials = name.split(" ").map((n) => n[0]).join("").substring(0, 2).toUpperCase()
   return {
     id: msg.id,
@@ -84,7 +87,7 @@ export function useChat(workspaceId?: string | null, userName?: string) {
       }
       const { data, error } = await supabase
         .from("messages")
-        .select("*")
+        .select("*, profiles:user_id(full_name, avatar_url)")
         .eq("workspace_id", workspaceId)
         .order("created_at", { ascending: false })
         .limit(50)
@@ -112,12 +115,23 @@ export function useChat(workspaceId?: string | null, userName?: string) {
         schema: "public",
         table: "messages",
         filter: `workspace_id=eq.${workspaceId}`,
-      }, (payload) => {
+      }, async (payload) => {
         if (!mounted) return
         const newMsg = payload.new as DbMessage
         // Avoid duplicates
         if (messagesRef.current.some((m) => m.id === newMsg.id)) return
-        const chatMsg = dbMessageToChat(newMsg, userName)
+        // Fetch sender's profile name since realtime payload doesn't include joins
+        let senderName = userName
+        if (newMsg.user_id) {
+          const supabase = createClient()
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("full_name")
+            .eq("id", newMsg.user_id)
+            .single()
+          if (profile?.full_name) senderName = profile.full_name
+        }
+        const chatMsg = dbMessageToChat(newMsg, senderName)
         setMessages((prev) => [chatMsg, ...prev])
       })
       .subscribe()
@@ -132,11 +146,31 @@ export function useChat(workspaceId?: string | null, userName?: string) {
   // Send message
   const sendMessage = useCallback(async (text: string, fileRef?: string) => {
     if (!text.trim()) return
+    // Fetch current user's profile name for accurate sender display
+    let senderName = userName || "You"
+    let senderInitials = senderName.split(" ").map((n) => n[0]).join("").substring(0, 2).toUpperCase()
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("full_name")
+          .eq("id", user.id)
+          .single()
+        if (profile?.full_name) {
+          senderName = profile.full_name
+          senderInitials = senderName.split(" ").map((n) => n[0]).join("").substring(0, 2).toUpperCase()
+        }
+      }
+    } catch {
+      // Use fallback name
+    }
     // Optimistic add
     const optimisticMsg: ChatMessage = {
       id: `temp-${Date.now()}`,
-      sender: userName || "You",
-      initials: (userName || "Y").split(" ").map((n) => n[0]).join("").substring(0, 2).toUpperCase(),
+      sender: senderName,
+      initials: senderInitials,
       text: text.trim(),
       time: "just now",
       file: fileRef,
