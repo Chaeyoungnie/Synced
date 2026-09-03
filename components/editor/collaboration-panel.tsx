@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   ChevronLeft,
   ChevronRight,
@@ -93,6 +93,27 @@ export function CollaborationPanel({
     setMessage('')
   }
 
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [showScrollBtn, setShowScrollBtn] = useState(false)
+
+  // Auto-scroll to top (newest message) when new messages arrive
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = 0
+    }
+  }, [chatMessages.length])
+
+  // Show scroll-to-top button when user scrolls down
+  const handleScroll = () => {
+    if (messagesEndRef.current) {
+      setShowScrollBtn(messagesEndRef.current.scrollTop > 100)
+    }
+  }
+
+  const scrollToTop = () => {
+    messagesEndRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const onlineCount = activeCollaborators.filter((c) => c.role !== 'Viewer').length
 
   return (
@@ -139,9 +160,9 @@ export function CollaborationPanel({
           <Separator className="my-2" />
 
           {/* Activity section */}
-          <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 flex flex-col min-h-0 relative">
             <CollapsibleSection title="Activity" defaultOpen={true} className="flex-1 flex flex-col min-h-0">
-            <div className="flex flex-col gap-3 pb-2 overflow-y-auto flex-1">
+            <div ref={messagesEndRef} onScroll={handleScroll} className="flex flex-col gap-3 pb-2 overflow-y-auto flex-1">
               {chatMessages.map((msg) => (
                 <div key={msg.id} className="group">
                   <div className="flex items-start gap-2">
@@ -167,6 +188,14 @@ export function CollaborationPanel({
               ))}
             </div>
             </CollapsibleSection>
+            {showScrollBtn && (
+              <button
+                onClick={scrollToTop}
+                className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 rounded-full bg-primary px-3 py-1 text-[10px] font-medium text-primary-foreground shadow-md hover:bg-primary/80 transition-colors"
+              >
+                ↓ New messages
+              </button>
+            )}
           </div>
 
           {/* Chat input */}
