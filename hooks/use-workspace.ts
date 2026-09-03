@@ -197,29 +197,54 @@ export function useWorkspace(workspaceId?: string | null) {
     if (isDemo) return
     const file = filesRef.current.find(f => f.name === fileName)
     if (!file) return
+    // Optimistic: remove from sidebar immediately
+    setDbFiles(prev => prev.filter(f => f.id !== file.id))
+    setFileContents(prev => { const next = { ...prev }; delete next[fileName]; return next })
     try {
       const supabase = createClient()
-      await supabase.from("files").delete().eq("id", file.id)
-      setDbFiles(prev => prev.filter(f => f.id !== file.id))
-      if (workspaceId) logActivity(workspaceId, 'file_deleted', { fileName })
-    } catch {}
+      const { error } = await supabase.from("files").delete().eq("id", file.id)
+      if (error) {
+        console.error('[Delete] Failed:', error.message)
+        // Revert: add file back
+        setDbFiles(prev => [...prev, file])
+      } else {
+        if (workspaceId) logActivity(workspaceId, 'file_deleted', { fileName })
+      }
+    } catch (e) {
+      console.error('[Delete] Exception:', e)
+      setDbFiles(prev => [...prev, file])
+    }
   }, [isDemo, workspaceId])
 
   const renameFile = useCallback(async (oldName: string, newName: string) => {
+    const file = filesRef.current.find(f => f.name === oldName)
+    if (!file) return
+    // Optimistic: rename in sidebar immediately
     setFileContents(prev => {
       const next = { ...prev }
       if (next[oldName] !== undefined) { next[newName] = next[oldName]; delete next[oldName] }
       return next
     })
+    setDbFiles(prev => prev.map(f => f.id === file.id ? { ...f, name: newName, path: "/" + newName } : f))
     if (isDemo) return
-    const file = filesRef.current.find(f => f.name === oldName)
-    if (!file) return
     try {
       const supabase = createClient()
-      await supabase.from("files").update({ name: newName, path: "/" + newName }).eq("id", file.id)
-      setDbFiles(prev => prev.map(f => f.id === file.id ? { ...f, name: newName, path: "/" + newName } : f))
-      if (workspaceId) logActivity(workspaceId, 'file_renamed', { oldName, newName })
-    } catch {}
+      const { error } = await supabase.from("files").update({ name: newName, path: "/" + newName }).eq("id", file.id)
+      if (error) {
+        console.error('[Rename] Failed:', error.message)
+        // Revert
+        setDbFiles(prev => prev.map(f => f.id === file.id ? { ...f, name: oldName, path: "/" + oldName } : f))
+        setFileContents(prev => {
+          const next = { ...prev }
+          if (next[newName] !== undefined) { next[oldName] = next[newName]; delete next[newName] }
+          return next
+        })
+      } else {
+        if (workspaceId) logActivity(workspaceId, 'file_renamed', { oldName, newName })
+      }
+    } catch (e) {
+      console.error('[Rename] Exception:', e)
+    }
   }, [isDemo, workspaceId])
 
   const subscribeToChanges = useCallback((id: string) => {
@@ -233,11 +258,20 @@ export function useWorkspace(workspaceId?: string | null) {
         table: 'files',
         filter: 'workspace_id=eq.' + id,
       }, (payload: any) => {
+        console.log('[Files Realtime] Event:', payload.eventType, payload)
+
+        // Handle DELETE events
+        if (payload.eventType === 'DELETE') {
+          const deletedId = payload.old?.id
+          if (deletedId) {
+            setDbFiles(prev => prev.filter(f => f.id !== deletedId))
+            setFileContents(prev => { const next = { ...prev }; const deletedName = payload.old?.name; if (deletedName) delete next[deletedName]; return next })
+          }
+          return
+        }
+
         const updated = payload.new as WorkspaceFile
         if (!updated) return
-        // Check if this was our own save (avoid echo loop)
-        const localContent = lastSavedRef.current[updated.name]
-        if (localContent === updated.content) return
         // Update local state with remote change
         setDbFiles(prev => {
           const exists = prev.find(f => f.id === updated.id)
