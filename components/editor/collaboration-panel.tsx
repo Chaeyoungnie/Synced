@@ -42,7 +42,7 @@ function CollapsibleSection({
   const [open, setOpen] = useState(defaultOpen)
 
   return (
-    <div>
+    <div className={cn('flex flex-col', className)}>
       <button
         className="flex w-full items-center gap-2 px-0 py-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
         onClick={() => setOpen((prev) => !prev)}
@@ -62,7 +62,6 @@ function CollapsibleSection({
         className={cn(
           'overflow-hidden transition-all duration-200',
           open ? 'opacity-100' : 'max-h-0 opacity-0',
-          className,
         )}
       >
         {children}
@@ -140,7 +139,8 @@ export function CollaborationPanel({
           <Separator className="my-2" />
 
           {/* Activity section */}
-          <CollapsibleSection title="Activity" defaultOpen={true} className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 flex flex-col min-h-0">
+            <CollapsibleSection title="Activity" defaultOpen={true} className="flex-1 flex flex-col min-h-0">
             <div className="flex flex-col gap-3 pb-2 overflow-y-auto flex-1">
               {chatMessages.map((msg) => (
                 <div key={msg.id} className="group">
@@ -166,7 +166,8 @@ export function CollaborationPanel({
                 </div>
               ))}
             </div>
-          </CollapsibleSection>
+            </CollapsibleSection>
+          </div>
 
           {/* Chat input */}
           <div className="mt-auto pt-2 shrink-0">
