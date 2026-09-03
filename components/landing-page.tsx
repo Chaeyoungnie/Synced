@@ -150,7 +150,7 @@ export default function LandingPage() {
           <a href="#pricing" onClick={() => setOpen(false)} className="text-sm text-muted-foreground hover:text-foreground">
             Pricing
           </a>
-          <Button size="sm" className="gap-2" render={<a href="#pricing" />} nativeButton={false}>
+          <Button size="sm" className="gap-2" render={<a href="/auth/sign-up" />} nativeButton={false}>
             Start building <ArrowUpRight className="size-3.5" />
           </Button>
         </div>
@@ -174,8 +174,8 @@ export default function LandingPage() {
             <p className="text-pretty text-lg leading-7 text-muted-foreground">
               Synced brings your code, live product, and team into one visible loop.
             </p>
-            <Button variant="outline" className="mt-7 gap-2 border-border">
-              Open the workspace <ArrowUpRight className="size-4" />
+            <Button variant="outline" className="mt-7 gap-2 border-border" render={<a href="/auth/sign-up" />} nativeButton={false}>
+              Start building <ArrowUpRight className="size-4" />
             </Button>
           </div>
         </div>
@@ -301,8 +301,8 @@ export default function LandingPage() {
               <h3 className="font-medium">Personal</h3>
               <p className="mt-2 text-sm text-muted-foreground">For trying the loop.</p>
               <p className="mt-8 text-3xl font-semibold">Free</p>
-              <Button variant="outline" className="mt-8 w-full border-border" render={<a href="/editor" />} nativeButton={false}>
-                Open sample
+              <Button variant="outline" className="mt-8 w-full border-border" render={<a href="/auth/sign-up" />} nativeButton={false}>
+                Get started free
               </Button>
             </div>
             <div className="bg-primary p-7 text-primary-foreground">

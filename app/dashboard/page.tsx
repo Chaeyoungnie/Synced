@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Plus, Folder, Users, Clock, MoreHorizontal, Trash2, Settings2, ArrowLeft, Search, Sparkles, Globe, Lock, User } from 'lucide-react'
@@ -12,6 +12,7 @@ import { useUser } from '@/hooks/use-user'
 import { isSupabaseConfigured } from '@/lib/supabase/client'
 import { createWorkspace, getWorkspaces, getSharedWorkspaces, deleteWorkspace } from '@/lib/supabase/workspaces'
 import { getMyInvitations, acceptInvitation, declineInvitation, type Invitation } from '@/lib/supabase/invitations'
+import { OnboardingGuide, ReplayGuideButton } from '@/components/onboarding-guide'
 
 interface Workspace {
   id: string; name: string; description: string;
@@ -141,6 +142,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <OnboardingGuide onComplete={() => {}} />
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link href="/" className="flex items-center gap-2 text-foreground hover:opacity-80">
@@ -178,6 +180,7 @@ export default function DashboardPage() {
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input placeholder="Search workspaces..." className="w-64 pl-9" value={sq} onChange={e => setSq(e.target.value)} />
             </div>
+            <ReplayGuideButton />
             <Button onClick={() => setCreateOpen(true)}><Plus className="mr-2 size-4" /> New</Button>
           </div>
         </div>
