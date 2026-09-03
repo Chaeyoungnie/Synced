@@ -50,9 +50,14 @@ jobs:
         run: pnpm tsc --noEmit
 
       - name: Run tests
-        run: pnpm vitest run --reporter=basic
+        run: pnpm vitest run --exclude=components/editor/data.test.ts
         env:
-          NODE_OPTIONS: '--max-old-space-size=6144'
+          NODE_OPTIONS: '--max-old-space-size=4096'
+
+      - name: Run data fixture tests
+        run: pnpm vitest run components/editor/data.test.ts
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
 
       - name: Build
         run: pnpm build
