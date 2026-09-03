@@ -138,7 +138,7 @@ export function CollaborationPanel({
 
           {/* Activity section */}
           <CollapsibleSection title="Activity" defaultOpen={true}>
-            <div className="flex flex-col gap-3 pb-2">
+            <div className="flex flex-col gap-3 pb-2 max-h-[300px] overflow-y-auto">
               {chatMessages.map((msg) => (
                 <div key={msg.id} className="group">
                   <div className="flex items-start gap-2">
@@ -166,7 +166,7 @@ export function CollaborationPanel({
           </CollapsibleSection>
 
           {/* Chat input */}
-          <div className="mt-auto pt-2">
+          <div className="mt-auto pt-2 shrink-0">
             <div className="relative">
               <Input
                 value={message}
