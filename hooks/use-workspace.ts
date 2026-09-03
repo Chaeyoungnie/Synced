@@ -209,6 +209,13 @@ export function useWorkspace(workspaceId?: string | null) {
         setDbFiles(prev => [...prev, file])
       } else {
         if (workspaceId) logActivity(workspaceId, 'file_deleted', { fileName })
+        // Broadcast delete to other users
+        const bc = createClient().channel('file-ops:' + workspaceId)
+        bc.subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            bc.send({ type: 'broadcast', event: 'file-deleted', payload: { fileId: file.id, fileName } })
+          }
+        })
       }
     } catch (e) {
       console.error('[Delete] Exception:', e)
@@ -241,6 +248,12 @@ export function useWorkspace(workspaceId?: string | null) {
         })
       } else {
         if (workspaceId) logActivity(workspaceId, 'file_renamed', { oldName, newName })
+        const bc = createClient().channel('file-ops:' + workspaceId)
+        bc.subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            bc.send({ type: 'broadcast', event: 'file-renamed', payload: { fileId: file.id, oldName, newName } })
+          }
+        })
       }
     } catch (e) {
       console.error('[Rename] Exception:', e)
@@ -250,6 +263,8 @@ export function useWorkspace(workspaceId?: string | null) {
   const subscribeToChanges = useCallback((id: string) => {
     if (!isSupabaseConfigured()) return
     const supabase = createClient()
+
+    // 1. Postgres changes channel — handles INSERT and UPDATE (reliable)
     const channel = supabase
       .channel('files:' + id)
       .on('postgres_changes', {
@@ -258,39 +273,15 @@ export function useWorkspace(workspaceId?: string | null) {
         table: 'files',
         filter: 'workspace_id=eq.' + id,
       }, (payload: any) => {
-        console.log('[Files Realtime] Event:', payload.eventType, payload)
-
-        // Handle DELETE events
-        if (payload.eventType === 'DELETE') {
-          const deletedId = payload.old?.id
-          if (deletedId) {
-            // Look up name BEFORE removing from dbFiles
-            setDbFiles(prev => {
-              const file = prev.find(f => f.id === deletedId)
-              if (file) {
-                setFileContents(cc => { const next = { ...cc }; delete next[file.name]; return next })
-              }
-              return prev.filter(f => f.id !== deletedId)
-            })
-          }
-          return
-        }
-
+        console.log('[Files Realtime] Event:', payload.eventType)
         const updated = payload.new as WorkspaceFile
         if (!updated) return
-
-        // Handle UPDATE (including rename)
+        // INSERT or UPDATE
         setDbFiles(prev => {
           const exists = prev.find(f => f.id === updated.id)
           if (exists) {
-            // If name changed, clean up old content key
             if (exists.name !== updated.name) {
-              setFileContents(cc => {
-                const next = { ...cc }
-                next[updated.name] = updated.content || ''
-                delete next[exists.name]
-                return next
-              })
+              setFileContents(cc => { const next = { ...cc }; next[updated.name] = updated.content || ''; delete next[exists.name]; return next })
             }
             return prev.map(f => f.id === updated.id ? updated : f)
           }
@@ -299,7 +290,24 @@ export function useWorkspace(workspaceId?: string | null) {
         setFileContents(prev => ({ ...prev, [updated.name]: updated.content || '' }))
       })
       .subscribe()
-    return () => { supabase.removeChannel(channel) }
+
+    // 2. Broadcast channel — handles DELETE and RENAME (postgres DELETE is unreliable)
+    const broadcastChannel = supabase.channel('file-ops:' + id)
+    broadcastChannel
+      .on('broadcast', { event: 'file-deleted' }, (payload: any) => {
+        const { fileId, fileName } = payload.payload
+        console.log('[Files Broadcast] DELETE:', fileName)
+        setDbFiles(prev => prev.filter(f => f.id !== fileId))
+        setFileContents(prev => { const next = { ...prev }; delete next[fileName]; return next })
+      })
+      .on('broadcast', { event: 'file-renamed' }, (payload: any) => {
+        const { fileId, oldName, newName } = payload.payload
+        console.log('[Files Broadcast] RENAME:', oldName, '->', newName)
+        setDbFiles(prev => prev.map(f => f.id === fileId ? { ...f, name: newName, path: '/' + newName } : f))
+        setFileContents(prev => { const next = { ...prev }; next[newName] = prev[oldName] || ''; delete next[oldName]; return next })
+      })
+      .subscribe()
+    return () => { supabase.removeChannel(channel); supabase.removeChannel(broadcastChannel) }
   }, [])
 
 useEffect(() => {
