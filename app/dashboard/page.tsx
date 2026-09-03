@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { useUser } from '@/hooks/use-user'
 import { isSupabaseConfigured } from '@/lib/supabase/client'
-import { createWorkspace, getWorkspaces, deleteWorkspace } from '@/lib/supabase/workspaces'
+import { createWorkspace, getWorkspaces, getSharedWorkspaces, deleteWorkspace } from '@/lib/supabase/workspaces'
 import { getMyInvitations, acceptInvitation, declineInvitation, type Invitation } from '@/lib/supabase/invitations'
 
 interface Workspace {
@@ -72,6 +72,20 @@ export default function DashboardPage() {
 
         setAuthWs(mapped)
 
+        // Load shared workspaces
+        try {
+          const { data: shared } = await getSharedWorkspaces()
+          if (shared) {
+            const mappedShared: Workspace[] = shared.map((w: any) => ({
+              id: w.id, name: w.name, description: w.description || '',
+              fileCount: 0, collaboratorCount: 2,
+              lastModified: w.updated_at ? new Date(w.updated_at).toLocaleDateString() : 'Never',
+              isPublic: w.is_public || false, language: 'TypeScript', color: '#10b981',
+            }))
+            setSharedWs(mappedShared)
+          }
+        } catch {}
+
         // Load invitations
         setInvitationsLoading(true)
         try {
@@ -92,6 +106,7 @@ export default function DashboardPage() {
   const [authWs, setAuthWs] = useState<Workspace[]>([])
   const [invitations, setInvitations] = useState<Invitation[]>([])
   const [invitationsLoading, setInvitationsLoading] = useState(false)
+  const [sharedWs, setSharedWs] = useState<Workspace[]>([])
 
   const allWs = user ? (authWs.length > 0 ? authWs : MOCK) : MOCK
   const filtered = allWs.filter(w => w.name.toLowerCase().includes(sq.toLowerCase()) || w.description.toLowerCase().includes(sq.toLowerCase()))
@@ -210,17 +225,33 @@ export default function DashboardPage() {
         </div>
 
         {/* Shared with you section */}
-        {invitations.length > 0 && (
+        {(sharedWs.length > 0 || invitations.length > 0) && (
           <div className="mt-12">
             <div className="mb-4 flex items-center gap-2">
-              <Users className="size-5 text-primary" />
+              <Users className="size-5 text-emerald-500" />
               <div>
                 <h2 className="text-lg font-semibold tracking-tight">Shared with you</h2>
-                <p className="text-xs text-muted-foreground">{invitations.length} pending invitation{invitations.length !== 1 ? 's' : ''}</p>
+                <p className="text-xs text-muted-foreground">{sharedWs.length} workspace{sharedWs.length !== 1 ? 's' : ''} · {invitations.length} pending invitation{invitations.length !== 1 ? 's' : ''}</p>
               </div>
             </div>
-            <div className="rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-4">
+            <div className="rounded-xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent p-4">
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {/* Shared workspaces (already accepted) */}
+                {sharedWs.map((w) => (
+                  <button
+                    key={w.id}
+                    onClick={() => router.push('/editor?ws=' + w.id)}
+                    className="flex items-center gap-3 rounded-lg border border-border bg-background p-3 text-left transition-all hover:border-emerald-500/30 hover:shadow-sm"
+                  >
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-sm font-bold text-emerald-500">
+                      {w.name[0].toUpperCase()}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="truncate text-sm font-semibold">{w.name}</h3>
+                      <p className="text-[11px] text-muted-foreground">{w.description || 'Shared workspace'}</p>
+                    </div>
+                  </button>
+                ))}
                 {invitations.map((inv) => (
                   <div key={inv.id} className="flex items-center gap-3 rounded-lg border border-border bg-background p-3 transition-all hover:border-primary/30 hover:shadow-sm">
                     <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-sm font-bold text-primary">

@@ -44,43 +44,37 @@ export async function createWorkspace(name: string, description?: string) {
   }
 
   return { data, error }
-}
-
-export async function getWorkspaces() {
+}export async function getWorkspaces() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) throw new Error('Not authenticated')
 
-  // Get workspaces where user is owner OR collaborator
+  // Get ONLY workspaces where user is the owner
   const { data: ownedWorkspaces, error: ownedError } = await supabase
     .from('workspaces')
     .select('*')
     .eq('owner_id', user.id)
     .order('updated_at', { ascending: false })
 
-  // Get workspaces where user is a collaborator
-  const { data: collabWorkspaces } = await supabase
+  return { data: ownedWorkspaces || [], error: ownedError }
+}
+
+// Get workspaces shared with the current user as a collaborator
+export async function getSharedWorkspaces() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { data: [], error: null }
+
+  const { data, error } = await supabase
     .from('collaborators')
     .select('workspaces(*)')
     .eq('user_id', user.id)
 
-  // Merge and deduplicate
-  const allWorkspaces = [...(ownedWorkspaces || [])]
-  const ownedIds = new Set(allWorkspaces.map(w => w.id))
-  for (const c of collabWorkspaces || []) {
-    const ws = (c as any).workspaces
-    if (ws && !ownedIds.has(ws.id)) {
-      allWorkspaces.push(ws)
-    }
-  }
-  allWorkspaces.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+  if (error) return { data: [], error }
 
-  if (ownedError) {
-    return { data: collabWorkspaces ? allWorkspaces : null, error: ownedError }
-  }
-
-  return { data: allWorkspaces, error: null }
+  const workspaces = (data || []).map((c: any) => c.workspaces).filter(Boolean)
+  return { data: workspaces, error: null }
 }
 
 export async function getWorkspace(workspaceId: string) {
