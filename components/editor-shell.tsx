@@ -630,6 +630,21 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {/* Delete File Dialog */}
+      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete file</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete &quot;{deleteTarget}&quot;? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteOpen(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <UpgradeDialog open={upgradeDialogOpen} onOpenChange={setUpgradeDialogOpen} reason={upgradeReason} />
     </main>
   )
