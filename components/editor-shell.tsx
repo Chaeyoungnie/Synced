@@ -291,7 +291,7 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
     })
   }, [])
   const handleNewFile = useCallback(() => { if (!trialLimits.canAddFile) { setUpgradeReason(trialLimits.upgradeReason); setUpgradeDialogOpen(true); return; }; setNewFileName(''); setNewFileOpen(true) }, [trialLimits.canAddFile, trialLimits.upgradeReason])
-  const confirmNewFile = useCallback(() => { const trimmed = newFileName.trim(); if (!trimmed) return; const fileName = trimmed.includes('.') ? trimmed : trimmed + '.tsx'; wsCreateFile(fileName, 'code'); openFile(fileName); setContents((prev) => ({ ...prev, [fileName]: '' })); setNewFileOpen(false); setNewFileName(''); toast('File created', 'success') }, [newFileName, openFile, toast])
+  const confirmNewFile = useCallback(async () => { const trimmed = newFileName.trim(); if (!trimmed) return; const fileName = trimmed.includes('.') ? trimmed : trimmed + '.tsx'; setContents((prev) => ({ ...prev, [fileName]: '' })); await wsCreateFile(fileName, 'code'); openFile(fileName); setNewFileOpen(false); setNewFileName(''); toast('File created', 'success') }, [newFileName, openFile, toast])
   useBeforeUnload(modifiedFiles.size > 0)
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
