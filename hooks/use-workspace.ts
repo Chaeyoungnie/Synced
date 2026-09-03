@@ -177,14 +177,17 @@ export function useWorkspace(workspaceId?: string | null) {
 
   const createFile = useCallback(async (name: string, type: string = "code", initialContent: string = "") => {
     setFileContents(prev => ({ ...prev, [name]: initialContent }))
-    setFileTree(prev => ({ ...prev, children: [...prev.children, { name, type: type as any, status: "new" } as FileNode] }))
+    // Optimistically add to dbFiles so the useEffect updates fileTree immediately
+    const optimisticFile = { id: 'temp-' + Date.now(), name, path: '/' + name, content: initialContent, language: name.endsWith('.css') ? 'css' : name.endsWith('.json') ? 'json' : 'typescript', git_status: 'new' as GitStatus, workspace_id: workspaceId || '' }
+    setDbFiles(prev => [...prev, optimisticFile as unknown as WorkspaceFile])
     if (isDemo || !workspaceId || !workspace) return
     try {
       const supabase = createClient()
       const fileType = name.endsWith('.css') ? 'css' : name.endsWith('.json') ? 'json' : 'typescript'
       const { data } = await supabase.from("files").insert({ workspace_id: workspaceId, name, path: "/" + name, content: initialContent, language: fileType, git_status: "new" }).select().single()
       if (data) {
-        setDbFiles(prev => [...prev, data as unknown as WorkspaceFile])
+        // Replace optimistic file with real file from DB
+        setDbFiles(prev => prev.map(f => f.id === optimisticFile.id ? data as unknown as WorkspaceFile : f))
         logActivity(workspaceId, 'file_created', { fileName: name })
       }
     } catch {}
@@ -244,9 +247,6 @@ export function useWorkspace(workspaceId?: string | null) {
           return [...prev, updated]
         })
         setFileContents(prev => ({ ...prev, [updated.name]: updated.content || '' }))
-        setFileTree(prev => filesToTree(
-          filesRef.current.map(f => f.id === updated.id ? updated : f)
-        ))
       })
       .subscribe()
     return () => { supabase.removeChannel(channel) }
@@ -267,6 +267,11 @@ useEffect(() => {
     init()
     return () => { mounted = false; cleanupSub?.() }
   }, [workspaceId, loadWorkspace, subscribeToChanges])
+
+  // Keep fileTree in sync with dbFiles (fixes real-time file tree updates)
+  useEffect(() => {
+    setFileTree(filesToTree(dbFiles))
+  }, [dbFiles])
 
   useEffect(() => () => { Object.values(saveTimers.current).forEach(clearTimeout) }, [])
 
