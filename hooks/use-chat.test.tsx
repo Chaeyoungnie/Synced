@@ -106,11 +106,23 @@ describe('useChat', () => {
       { id: 'm1', workspace_id: 'w1', user_id: 'u1', content: 'Hello from DB', file_reference: null, created_at: new Date().toISOString() },
       { id: 'm2', workspace_id: 'w1', user_id: 'u2', content: 'Reply from DB', file_reference: 'page.tsx', created_at: new Date().toISOString() },
     ]
-    mockSupabase.from = vi.fn().mockReturnValue({
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockResolvedValue({ data: mockMessages, error: null }),
+    const mockProfiles = [
+      { id: 'u1', full_name: 'Alice' },
+      { id: 'u2', full_name: 'Bob' },
+    ]
+    mockSupabase.from = vi.fn().mockImplementation((table: string) => {
+      if (table === 'profiles') {
+        return {
+          select: vi.fn().mockReturnThis(),
+          in: vi.fn().mockResolvedValue({ data: mockProfiles, error: null }),
+        }
+      }
+      return {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockResolvedValue({ data: mockMessages, error: null }),
+      }
     })
 
     const { result } = renderHook(() => useChat('w1', 'Test User'))
