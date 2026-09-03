@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Plus, Folder, Users, Clock, MoreHorizontal, Trash2, Settings2, ArrowLeft, Search, Sparkles, Globe, Lock, User } from 'lucide-react'
@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { useUser } from '@/hooks/use-user'
 import { isSupabaseConfigured } from '@/lib/supabase/client'
 import { createWorkspace, getWorkspaces, deleteWorkspace } from '@/lib/supabase/workspaces'
+import { getMyInvitations, acceptInvitation, declineInvitation, type Invitation } from '@/lib/supabase/invitations'
 
 interface Workspace {
   id: string; name: string; description: string;
@@ -70,6 +71,14 @@ export default function DashboardPage() {
         }))
 
         setAuthWs(mapped)
+
+        // Load invitations
+        setInvitationsLoading(true)
+        try {
+          const invs = await getMyInvitations()
+          setInvitations(invs)
+        } catch {}
+        setInvitationsLoading(false)
       } catch (e) {
         console.error('Error loading workspaces:', e)
       }
@@ -81,6 +90,8 @@ export default function DashboardPage() {
   }, [user, userLoading])
 
   const [authWs, setAuthWs] = useState<Workspace[]>([])
+  const [invitations, setInvitations] = useState<Invitation[]>([])
+  const [invitationsLoading, setInvitationsLoading] = useState(false)
 
   const allWs = user ? (authWs.length > 0 ? authWs : MOCK) : MOCK
   const filtered = allWs.filter(w => w.name.toLowerCase().includes(sq.toLowerCase()) || w.description.toLowerCase().includes(sq.toLowerCase()))
@@ -197,6 +208,66 @@ export default function DashboardPage() {
             <span className="text-sm font-medium">Create new workspace</span>
           </button>
         </div>
+
+        {/* Shared with you section */}
+        {invitations.length > 0 && (
+          <div className="mt-10">
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold tracking-tight">Shared with you</h2>
+              <p className="mt-1 text-sm text-muted-foreground">Workspaces others have invited you to collaborate on.</p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {invitations.map((inv) => (
+                <div key={inv.id} className="flex items-center gap-4 rounded-xl border border-primary/20 bg-primary/5 p-4">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-sm font-bold text-primary">
+                    {(inv.workspace_name || '?')[0].toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate text-sm font-semibold">{inv.workspace_name}</h3>
+                    <p className="text-xs text-muted-foreground">Invited by {inv.inviter_name}</p>
+                  </div>
+                  <div className="flex shrink-0 gap-1.5">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-7 text-xs"
+                      onClick={async () => {
+                        await declineInvitation(inv.id)
+                        setInvitations(prev => prev.filter(i => i.id !== inv.id))
+                      }}
+                    >
+                      Decline
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={async () => {
+                        const { error } = await acceptInvitation(inv.id)
+                        if (!error) {
+                          setInvitations(prev => prev.filter(i => i.id !== inv.id))
+                          // Add workspace to list
+                          setAuthWs(prev => [{
+                            id: inv.workspace_id,
+                            name: inv.workspace_name || 'Shared workspace',
+                            description: '',
+                            fileCount: 0,
+                            collaboratorCount: 2,
+                            lastModified: 'Just now',
+                            isPublic: false,
+                            language: 'TypeScript',
+                            color: '#6366f1',
+                          }, ...prev])
+                        }
+                      }}
+                    >
+                      Accept
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent>

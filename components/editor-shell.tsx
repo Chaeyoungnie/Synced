@@ -78,7 +78,8 @@ import type { RemoteCursor } from '@/lib/codemirror/remote-cursors'
 import { useFileVersions } from '@/hooks/use-file-versions'
 import { InviteCollaboratorDialog } from '@/components/editor/invite-collaborator-dialog'
 import { NotificationBell } from '@/components/editor/notifications'
-import { addCollaborator, deleteWorkspace } from '@/lib/supabase/workspaces'
+import { deleteWorkspace } from '@/lib/supabase/workspaces'
+import { createInvitation } from '@/lib/supabase/invitations'
 import { TerminalPanel } from '@/components/editor/terminal-panel'
 import { GitPanel } from '@/components/editor/git-panel'
 import { TrialBanner } from '@/components/trial-banner'
@@ -542,7 +543,11 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
             toast('Sign in to invite collaborators', 'info')
             return
           }
-          await addCollaborator(workspaceId, email, role)
+          const { error } = await createInvitation(workspaceId, email)
+          if (error) {
+            toast(error, 'error')
+            throw new Error(error)
+          }
           toast('Invitation sent to ' + email, 'success')
         }}
       />
