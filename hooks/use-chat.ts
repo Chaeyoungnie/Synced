@@ -87,13 +87,27 @@ export function useChat(workspaceId?: string | null, userName?: string) {
       }
       const { data, error } = await supabase
         .from("messages")
-        .select("*, profiles:user_id(full_name, avatar_url)")
+        .select("*")
         .eq("workspace_id", workspaceId)
         .order("created_at", { ascending: false })
         .limit(50)
       if (error) throw error
       const chatMessages = (data || []).map((m: DbMessage) => dbMessageToChat(m, userName))
-      setMessages(chatMessages)
+      // Fetch sender names separately (no foreign key join needed)
+      const userIds = [...new Set((data || []).map((m: DbMessage) => m.user_id).filter(Boolean))]
+      let profileMap: Record<string, string> = {}
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabase.from("profiles").select("id, full_name").in("id", userIds)
+        if (profiles) {
+          profileMap = Object.fromEntries(profiles.map((p: any) => [p.id, p.full_name || "Unknown"]))
+        }
+      }
+      // Re-map messages with correct sender names
+      const finalMessages = (data || []).map((m: DbMessage) => {
+        const senderName = profileMap[m.user_id || ''] || userName || "User"
+        return dbMessageToChat({ ...m, profiles: { full_name: senderName } } as any, userName)
+      })
+      setMessages(finalMessages)
       setIsDemo(false)
     } catch {
       setMessages(getDemoMessages())

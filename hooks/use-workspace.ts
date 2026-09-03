@@ -21,7 +21,6 @@ export interface WorkspaceData {
   id: string
   name: string
   description: string | null
-  is_public: boolean
 }
 
 export interface CollaboratorData {
@@ -89,24 +88,36 @@ export function useWorkspace(workspaceId?: string | null) {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return false
-      const { data: ws } = await supabase.from("workspaces").select("id, name, description, is_public").eq("id", id).single()
+      const { data: ws } = await supabase.from("workspaces").select("id, name, description").eq("id", id).single()
       if (!ws) return false
       const { data: fetchedFiles } = await supabase.from("files").select("*").eq("workspace_id", id).order("path")
       if (!fetchedFiles) return false
-      const { data: collabs } = await supabase.from("collaborators").select("role, profiles:user_id(full_name, avatar_url)").eq("workspace_id", id)
+      const { data: collabs } = await supabase.from("collaborators").select("role, user_id").eq("workspace_id", id)
       setWorkspace(ws as WorkspaceData)
       setDbFiles(fetchedFiles as unknown as WorkspaceFile[])
       setFileTree(filesToTree(fetchedFiles as unknown as WorkspaceFile[]))
       setFileContents(filesToContentMap(fetchedFiles as unknown as WorkspaceFile[]))
       setIsDemo(false)
-      if (collabs) {
-        setCollaborators(collabs.map((c: any) => ({
-          name: c.profiles?.full_name || "Unknown",
-          initials: (c.profiles?.full_name || "U").split(" ").map((n: string) => n[0]).join("").substring(0, 2).toUpperCase(),
-          color: "bg-foreground",
-          role: c.role.charAt(0).toUpperCase() + c.role.slice(1),
-          status: "Online",
-        })))
+      if (collabs && collabs.length > 0) {
+        // Fetch profile names for each collaborator
+        const userIds = collabs.map((c: any) => c.user_id).filter(Boolean)
+        let profileMap: Record<string, string> = {}
+        if (userIds.length > 0) {
+          const { data: profiles } = await supabase.from("profiles").select("id, full_name").in("id", userIds)
+          if (profiles) {
+            profileMap = Object.fromEntries(profiles.map((p: any) => [p.id, p.full_name || "Unknown"]))
+          }
+        }
+        setCollaborators(collabs.map((c: any) => {
+          const name = profileMap[c.user_id] || "Unknown"
+          return {
+            name,
+            initials: name.split(" ").map((n: string) => n[0]).join("").substring(0, 2).toUpperCase(),
+            color: "bg-foreground",
+            role: c.role.charAt(0).toUpperCase() + c.role.slice(1),
+            status: "Online",
+          }
+        }))
       }
       return true
     } catch { return false }
