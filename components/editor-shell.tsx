@@ -644,6 +644,25 @@ export function EditorShell({ sampleMode = false, workspaceId = null }: { sample
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {/* Rename File Dialog */}
+      <Dialog open={renameOpen} onOpenChange={setRenameOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Rename file</DialogTitle>
+            <DialogDescription>Enter a new name for &quot;{renameTarget}&quot;</DialogDescription>
+          </DialogHeader>
+          <Input
+            autoFocus
+            value={renameValue}
+            onChange={(e) => setRenameValue(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') handleRename() }}
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRenameOpen(false)}>Cancel</Button>
+            <Button onClick={handleRename} disabled={!renameValue.trim() || renameValue === renameTarget}>Rename</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {/* Delete File Dialog */}
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <DialogContent className="sm:max-w-md">
