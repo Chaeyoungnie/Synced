@@ -153,9 +153,9 @@ export default function DashboardPage() {
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Workspaces</h1>
+            <h1 className="text-2xl font-bold tracking-tight">My Workspaces</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {allWs.length} workspace{allWs.length !== 1 ? 's' : ''} · {user ? 'Signed in as ' + dn : 'Demo mode'}
+              {allWs.length} workspace{allWs.length !== 1 ? 's' : ''} · {invitations.length > 0 && invitations.length + ' invitation' + (invitations.length !== 1 ? 's' : '') + ' pending'} {user ? '· Signed in as ' + dn : '· Demo mode'}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -211,60 +211,64 @@ export default function DashboardPage() {
 
         {/* Shared with you section */}
         {invitations.length > 0 && (
-          <div className="mt-10">
-            <div className="mb-4">
-              <h2 className="text-lg font-semibold tracking-tight">Shared with you</h2>
-              <p className="mt-1 text-sm text-muted-foreground">Workspaces others have invited you to collaborate on.</p>
+          <div className="mt-12">
+            <div className="mb-4 flex items-center gap-2">
+              <Users className="size-5 text-primary" />
+              <div>
+                <h2 className="text-lg font-semibold tracking-tight">Shared with you</h2>
+                <p className="text-xs text-muted-foreground">{invitations.length} pending invitation{invitations.length !== 1 ? 's' : ''}</p>
+              </div>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {invitations.map((inv) => (
-                <div key={inv.id} className="flex items-center gap-4 rounded-xl border border-primary/20 bg-primary/5 p-4">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-sm font-bold text-primary">
-                    {(inv.workspace_name || '?')[0].toUpperCase()}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="truncate text-sm font-semibold">{inv.workspace_name}</h3>
-                    <p className="text-xs text-muted-foreground">Invited by {inv.inviter_name}</p>
-                  </div>
-                  <div className="flex shrink-0 gap-1.5">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="h-7 text-xs"
-                      onClick={async () => {
-                        await declineInvitation(inv.id)
-                        setInvitations(prev => prev.filter(i => i.id !== inv.id))
-                      }}
-                    >
-                      Decline
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="h-7 text-xs"
-                      onClick={async () => {
-                        const { error } = await acceptInvitation(inv.id)
-                        if (!error) {
+            <div className="rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-4">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {invitations.map((inv) => (
+                  <div key={inv.id} className="flex items-center gap-3 rounded-lg border border-border bg-background p-3 transition-all hover:border-primary/30 hover:shadow-sm">
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-sm font-bold text-primary">
+                      {(inv.workspace_name || '?')[0].toUpperCase()}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="truncate text-sm font-semibold">{inv.workspace_name}</h3>
+                      <p className="text-[11px] text-muted-foreground">from {inv.inviter_name}</p>
+                    </div>
+                    <div className="flex shrink-0 gap-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 px-2 text-[11px] text-muted-foreground hover:text-foreground"
+                        onClick={async () => {
+                          await declineInvitation(inv.id)
                           setInvitations(prev => prev.filter(i => i.id !== inv.id))
-                          // Add workspace to list
-                          setAuthWs(prev => [{
-                            id: inv.workspace_id,
-                            name: inv.workspace_name || 'Shared workspace',
-                            description: '',
-                            fileCount: 0,
-                            collaboratorCount: 2,
-                            lastModified: 'Just now',
-                            isPublic: false,
-                            language: 'TypeScript',
-                            color: '#6366f1',
-                          }, ...prev])
-                        }
-                      }}
-                    >
-                      Accept
-                    </Button>
+                        }}
+                      >
+                        Decline
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="h-6 px-2 text-[11px]"
+                        onClick={async () => {
+                          const { error } = await acceptInvitation(inv.id)
+                          if (!error) {
+                            setInvitations(prev => prev.filter(i => i.id !== inv.id))
+                            setAuthWs(prev => [{
+                              id: inv.workspace_id,
+                              name: inv.workspace_name || 'Shared workspace',
+                              description: '',
+                              fileCount: 0,
+                              collaboratorCount: 2,
+                              lastModified: 'Just now',
+                              isPublic: false,
+                              language: 'TypeScript',
+                              color: '#6366f1',
+                            }, ...prev])
+                          }
+                        }}
+                      >
+                        Accept
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         )}
