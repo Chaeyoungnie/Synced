@@ -2,26 +2,31 @@
 
 import { useState, useRef, useEffect } from 'react'
 import {
-  ChevronLeft,
-  ChevronRight,
   ChevronDown,
+  ChevronRight,
   MessageSquare,
-  PanelRight,
   Send,
   SmilePlus,
   Paperclip,
   AtSign,
+  Search,
+  Clock,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { Separator } from '@/components/ui/separator'
 import { PresenceAvatar } from './presence-avatar'
 
-import { useChat, type ChatMessage } from '@/hooks/use-chat'
-
+import { useChat } from '@/hooks/use-chat'
+import {
+  useWorkspaceActivity,
+  getActionLabel,
+  getActionIcon,
+  formatTimeAgo,
+  type ActivityEvent,
+} from '@/hooks/use-workspace-activity'
 
 
 function CollapsibleSection({
@@ -70,6 +75,28 @@ function CollapsibleSection({
   )
 }
 
+function ActivityItem({ event }: { event: ActivityEvent }) {
+  const fileName = (event.details as any)?.fileName || (event.details as any)?.name
+  return (
+    <div className="group flex items-start gap-2 py-1.5">
+      <div className="mt-0.5 text-[11px]">{getActionIcon(event.action)}</div>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs leading-relaxed">
+          <span className="font-medium text-foreground">{event.userName}</span>{' '}
+          <span className="text-muted-foreground">{getActionLabel(event.action)}</span>
+          {fileName && (
+            <span className="ml-1 font-mono text-[10px] text-primary">{fileName}</span>
+          )}
+        </p>
+        <div className="flex items-center gap-1 mt-0.5">
+          <Clock className="size-2.5 text-muted-foreground/50" />
+          <span className="text-[10px] text-muted-foreground">{formatTimeAgo(event.created_at)}</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function CollaborationPanel({
   collaboratorList,
   open,
@@ -86,6 +113,13 @@ export function CollaborationPanel({
   const activeCollaborators = collaboratorList || []
   const [message, setMessage] = useState('')
   const { messages: chatMessages, sendMessage: sendChatMessage } = useChat(workspaceId, userName)
+  const {
+    activities,
+    allActivities,
+    loading: activitiesLoading,
+    searchQuery,
+    setSearchQuery,
+  } = useWorkspaceActivity(workspaceId)
 
   const handleSendMessage = () => {
     if (!message.trim()) return
@@ -94,24 +128,38 @@ export function CollaborationPanel({
   }
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const activityEndRef = useRef<HTMLDivElement>(null)
   const [showScrollBtn, setShowScrollBtn] = useState(false)
+  const [showActivityScrollBtn, setShowActivityScrollBtn] = useState(false)
 
-  // Auto-scroll to top (newest message) when new messages arrive
+  // Auto-scroll chat to top (newest message) when new messages arrive
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollTop = 0
     }
   }, [chatMessages.length])
 
-  // Show scroll-to-top button when user scrolls down
-  const handleScroll = () => {
+  // Auto-scroll activity to top when new events arrive
+  useEffect(() => {
+    if (activityEndRef.current) {
+      activityEndRef.current.scrollTop = 0
+    }
+  }, [allActivities.length])
+
+  const handleChatScroll = () => {
     if (messagesEndRef.current) {
       setShowScrollBtn(messagesEndRef.current.scrollTop > 100)
     }
   }
 
-  const scrollToTop = () => {
-    messagesEndRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+  const handleActivityScroll = () => {
+    if (activityEndRef.current) {
+      setShowActivityScrollBtn(activityEndRef.current.scrollTop > 100)
+    }
+  }
+
+  const scrollToTop = (ref: React.RefObject<HTMLDivElement | null>) => {
+    ref.current?.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const onlineCount = activeCollaborators.filter((c) => c.role !== 'Viewer').length
@@ -159,10 +207,51 @@ export function CollaborationPanel({
 
           <Separator className="my-2" />
 
-          {/* Activity section */}
+          {/* Activity Feed section */}
           <div className="flex-1 flex flex-col min-h-0 relative">
-            <CollapsibleSection title="Activity" defaultOpen={true} className="flex-1 flex flex-col min-h-0">
-            <div ref={messagesEndRef} onScroll={handleScroll} className="flex flex-col gap-3 pb-2 overflow-y-auto flex-1">
+            <CollapsibleSection title="Activity" count={allActivities.length} defaultOpen={true} className="flex-1 flex flex-col min-h-0">
+              {/* Search input */}
+              <div className="relative mb-2">
+                <Search className="absolute left-2 top-1/2 -translate-y-1/2 size-3 text-muted-foreground" />
+                <Input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search activity..."
+                  className="h-7 pl-7 text-[11px]"
+                />
+              </div>
+
+              {/* Activity list */}
+              <div ref={activityEndRef} onScroll={handleActivityScroll} className="flex flex-col gap-1 pb-2 overflow-y-auto flex-1">
+                {activitiesLoading && allActivities.length === 0 && (
+                  <p className="py-4 text-center text-[11px] text-muted-foreground">Loading activity...</p>
+                )}
+                {!activitiesLoading && allActivities.length === 0 && (
+                  <p className="py-4 text-center text-[11px] text-muted-foreground">No activity yet</p>
+                )}
+                {!activitiesLoading && allActivities.length > 0 && activities.length === 0 && searchQuery && (
+                  <p className="py-4 text-center text-[11px] text-muted-foreground">No results for "{searchQuery}"</p>
+                )}
+                {activities.map((event) => (
+                  <ActivityItem key={event.id} event={event} />
+                ))}
+              </div>
+            </CollapsibleSection>
+            {showActivityScrollBtn && (
+              <button
+                onClick={() => scrollToTop(activityEndRef)}
+                className="absolute bottom-2 left-1/2 -translate-x-1/2 z-10 rounded-full bg-primary px-3 py-1 text-[10px] font-medium text-primary-foreground shadow-md hover:bg-primary/80 transition-colors"
+              >
+                ↓ New activity
+              </button>
+            )}
+          </div>
+
+          <Separator className="my-2" />
+
+          {/* Chat section */}
+          <CollapsibleSection title="Chat" count={chatMessages.length} defaultOpen={true} className="flex-1 flex flex-col min-h-0 relative">
+            <div ref={messagesEndRef} onScroll={handleChatScroll} className="flex flex-col gap-3 pb-2 overflow-y-auto flex-1 max-h-[200px]">
               {chatMessages.map((msg) => (
                 <div key={msg.id} className="group">
                   <div className="flex items-start gap-2">
@@ -187,16 +276,15 @@ export function CollaborationPanel({
                 </div>
               ))}
             </div>
-            </CollapsibleSection>
             {showScrollBtn && (
               <button
-                onClick={scrollToTop}
-                className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 rounded-full bg-primary px-3 py-1 text-[10px] font-medium text-primary-foreground shadow-md hover:bg-primary/80 transition-colors"
+                onClick={() => scrollToTop(messagesEndRef)}
+                className="absolute bottom-14 left-1/2 -translate-x-1/2 z-10 rounded-full bg-primary px-3 py-1 text-[10px] font-medium text-primary-foreground shadow-md hover:bg-primary/80 transition-colors"
               >
                 ↓ New messages
               </button>
             )}
-          </div>
+          </CollapsibleSection>
 
           {/* Chat input */}
           <div className="mt-auto pt-2 shrink-0">
