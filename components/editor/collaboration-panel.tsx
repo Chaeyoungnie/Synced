@@ -29,12 +29,14 @@ function CollapsibleSection({
   count,
   badge,
   defaultOpen = true,
+  className,
   children,
 }: {
   title: string
   count?: number
   badge?: string
   defaultOpen?: boolean
+  className?: string
   children: React.ReactNode
 }) {
   const [open, setOpen] = useState(defaultOpen)
@@ -59,7 +61,8 @@ function CollapsibleSection({
       <div
         className={cn(
           'overflow-hidden transition-all duration-200',
-          open ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0',
+          open ? 'opacity-100' : 'max-h-0 opacity-0',
+          className,
         )}
       >
         {children}
@@ -137,8 +140,8 @@ export function CollaborationPanel({
           <Separator className="my-2" />
 
           {/* Activity section */}
-          <CollapsibleSection title="Activity" defaultOpen={true}>
-            <div className="flex flex-col gap-3 pb-2 max-h-[300px] overflow-y-auto">
+          <CollapsibleSection title="Activity" defaultOpen={true} className="flex-1 flex flex-col min-h-0">
+            <div className="flex flex-col gap-3 pb-2 overflow-y-auto flex-1">
               {chatMessages.map((msg) => (
                 <div key={msg.id} className="group">
                   <div className="flex items-start gap-2">
