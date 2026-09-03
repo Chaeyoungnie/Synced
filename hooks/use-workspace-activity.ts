@@ -138,9 +138,13 @@ export function useWorkspaceActivity(workspaceId?: string | null) {
           filter: `workspace_id=eq.${workspaceId}`,
         },
         async (payload) => {
+          console.log('[Activity Realtime] Event received:', payload)
           if (!mounted) return
           const newActivity = payload.new as any
-          if (activitiesRef.current.some((a) => a.id === newActivity.id)) return
+          if (activitiesRef.current.some((a) => a.id === newActivity.id)) {
+            console.log('[Activity Realtime] Skipping duplicate:', newActivity.id)
+            return
+          }
 
           // Fetch sender name
           let userName = "Unknown"
