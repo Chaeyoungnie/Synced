@@ -168,7 +168,9 @@ export function useWorkspaceActivity(workspaceId?: string | null) {
           setActivities((prev) => [event, ...prev])
         }
       )
-      .subscribe()
+      .subscribe((status) => {
+        console.log('[Activity Realtime] Channel status:', status)
+      })
     return () => {
       mounted = false
       supabase.removeChannel(channel)
