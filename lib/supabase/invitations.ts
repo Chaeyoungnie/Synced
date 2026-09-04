@@ -89,12 +89,13 @@ export async function getMyInvitations(): Promise<Invitation[]> {
     let workspaceName = 'Unknown workspace'
     let inviterName = 'Someone'
 
-    const { data: ws } = await supabase
+    const { data: ws, error: wsError } = await supabase
       .from('workspaces')
       .select('name')
       .eq('id', inv.workspace_id)
       .single()
-    if (ws) workspaceName = ws.name
+    if (ws && !wsError) workspaceName = ws.name
+    else workspaceName = 'Shared workspace'
 
     const { data: inviter } = await supabase
       .from('profiles')
